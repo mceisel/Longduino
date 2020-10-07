@@ -1,27 +1,9 @@
-#ifndef _SIPEED_ST7789_H
-#define _SIPEED_ST7789_H
+#ifndef _SIPEED_GD32V_LCD_H
+#define _SIPEED_GD32V_LCD_H
 
 
 #include <SPI.h>
 #include <Adafruit_GFX.h>
-
-
-#if (defined(BOARD_SIPEED_MAIX_GO) || defined(BOARD_SIPEED_MAIX_ONE_DOCK) )
-#define SIPEED_ST7789_RST_PIN    37
-#define SIPEED_ST7789_DCX_PIN    38
-#define SIPEED_ST7789_SS_PIN     36
-#define SIPEED_ST7789_SCLK_PIN   39
-#else
-#define SIPEED_ST7789_RST_PIN    37
-#define SIPEED_ST7789_DCX_PIN    38
-#define SIPEED_ST7789_SS_PIN     36
-#define SIPEED_ST7789_SCLK_PIN   39
-#endif
-
-// default peripheral
-#define SIPEED_ST7789_RST_GPIONUM  6
-#define SIPEED_ST7789_DCX_GPIONUM  7
-#define SIPEED_ST7789_SS           3
 
 
 #define COLOR_BLACK       0x0000

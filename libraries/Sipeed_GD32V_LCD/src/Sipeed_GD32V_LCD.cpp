@@ -1,8 +1,6 @@
 
 #include "Sipeed_GD32V_LCD.h"
 #include "lcd.h"
-//include "sysctl.h"
-//include "utils.h"
 
 #define DIR_INVERT 0
 
