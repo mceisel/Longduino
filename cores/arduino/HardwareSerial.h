@@ -85,17 +85,53 @@
 class HardwareSerial : public Stream
 {
   public:
-    virtual void begin(unsigned long) = 0;
-    virtual void begin(unsigned long baudrate, uint16_t config) = 0;
-    virtual void end() = 0;
-    virtual int available(void) = 0;
-    virtual int peek(void) = 0;
-    virtual int read(void) = 0;
-    virtual void flush(void) = 0;
-    virtual size_t write(uint8_t) = 0;
-    using Print::write; // pull in write(str) and write(buf, size) from Print
-    virtual operator bool() = 0;
+    HardwareSerial(int uart_nr);
+    void begin(unsigned long baud, uint32_t config=SERIAL_8N1, int8_t rxPin=-1, int8_t txPin=-1, bool invert=false, unsigned long timeout_ms = 20000UL);
+    void end();
+
+    void updateBaudRate(unsigned long baud);
+    int available(void);
+    int availableForWrite(void);
+    int peek(void);
+    int read(void);
+    void flush(void);
+    size_t write(uint8_t);
+    size_t write(const uint8_t *buffer, size_t size);
+
+    inline size_t write(const char * s)
+    {
+        return write((uint8_t*) s, strlen(s));
+    }
+    inline size_t write(unsigned long n)
+    {
+        return write((uint8_t) n);
+    }
+    inline size_t write(long n)
+    {
+        return write((uint8_t) n);
+    }
+    inline size_t write(unsigned int n)
+    {
+        return write((uint8_t) n);
+    }
+    inline size_t write(int n)
+    {
+        return write((uint8_t) n);
+    }
+    uint32_t baudRate();
+    operator bool() const;
+
+  protected:
+    int _uartNr;
+    uint32_t _usartCom;
+    unsigned long _usartBaud;
 };
+
+#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_SERIAL)
+extern HardwareSerial Serial;
+extern HardwareSerial Serial1;
+extern HardwareSerial Serial2;
+#endif
 
 // XXX: Are we keeping the serialEvent API?
 extern void serialEventRun(void) __attribute__((weak));
