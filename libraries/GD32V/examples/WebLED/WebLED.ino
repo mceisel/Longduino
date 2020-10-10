@@ -1,4 +1,4 @@
-#include <Arduino.h>
+
 const bool printReply = true;
 const char line[] = "-----\n\r";
 int loopCount=0;
@@ -15,7 +15,7 @@ char temp[5];
 void getReply(int wait)
 { 
     int tempPos = 0;
-    long int time = millis();
+    uint64_t time = millis();
     while( (time + wait) > millis())
     {   
         while(Serial1.available()>0)
@@ -96,7 +96,7 @@ void loop()
 
 
           bool foundIPD = false;
-          for (int i=0; i<strlen(reply); i++)
+          for (size_t i=0; i<strlen(reply); i++)
           {
                if (  (reply[i]=='I') && (reply[i+1]=='P') && (reply[i+2]=='D')   ) { foundIPD = true;    }
           }
@@ -111,8 +111,8 @@ void loop()
               // Serial.print( "Have a request.  Loop = ");  Serial.println(loopCount); Serial.println(""); 
 
             bool LEDstate = false;
-            int LEDstatepos = 0;
-              for (int i=0; i<strlen(reply); i++)
+            size_t LEDstatepos = 0;
+              for (size_t i=0; i<strlen(reply); i++)
               {
                    if (!LEDstate) // just get the first occurrence of name
                    {
@@ -130,7 +130,7 @@ void loop()
               {
                     int tempPos = 0;
                     bool finishedCopying = false;
-                    for (int i= LEDstatepos; i<strlen(reply); i++)
+                    for (size_t i= LEDstatepos; i<strlen(reply); i++)
                     {
                          if ( (reply[i]==' ') && !finishedCopying )  { finishedCopying = true;   } 
                          if ( !finishedCopying )                     { LED[tempPos] = reply[i];   tempPos++; }
@@ -231,7 +231,7 @@ void loop()
       } //if(espSerial.available())
 
       for (int i=0; i<3 ;i++)
-      {LED[i]=NULL;}
+      {LED[i]=0;}
       delay (100);
 
       // drop to here and wait for next request.
