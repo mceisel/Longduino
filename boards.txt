@@ -121,6 +121,7 @@ wio_lite-risc-v.build.sdata.size=512
 wio_lite-risc-v.program.tool=serial
 wio_lite-risc-v.upload.tool=serial
 
-wio_lite-risc-v.upload.maximum_size=65536
+## Limit is the 128KiB Flash. Assume it is partially used for something else.
+wio_lite-risc-v.upload.maximum_size=81920
 wio_lite-risc-v.build.ldscript={runtime.platform.path}/cores/arduino/GD32VF103_Firmware_Library/RISCV/env_Eclipse/GD32VF103xB.lds
 
