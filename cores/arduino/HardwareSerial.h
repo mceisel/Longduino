@@ -124,6 +124,7 @@ class HardwareSerial : public Stream
   protected:
     int _uartNr;
     uint32_t _usartCom;
+    uint32_t _usartWlen;
     unsigned long _usartBaud;
 };
 

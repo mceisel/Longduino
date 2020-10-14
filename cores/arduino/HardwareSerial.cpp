@@ -6,7 +6,7 @@
 #include "pins_arduino.h"
 #include "HardwareSerial.h"
 
-static void usart_com_init(uint32_t com, unsigned long baud)
+static void usart_com_init(uint32_t com, uint32_t wlen, unsigned long baud)
 {
     if(com == USART0){
         /* enable GPIO clock */
@@ -24,16 +24,24 @@ static void usart_com_init(uint32_t com, unsigned long baud)
         rcu_periph_clock_enable(RCU_USART1);
         /* connect port to USARTx_Tx */
         gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_2);
-
         /* connect port to USARTx_Rx */
         gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_3);
+    }else if(com == USART2){
+        /* enable GPIO clock */
+        rcu_periph_clock_enable(RCU_GPIOB);
+        /* enable USART clock */
+        rcu_periph_clock_enable(RCU_USART2);
+        /* connect port to USARTx_Tx */
+        gpio_init(GPIOB, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_10);
+        /* connect port to USARTx_Rx */
+        gpio_init(GPIOB, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_11);
     }else{
         return;
     }
     /* USART configure */
     usart_deinit(com);
     usart_baudrate_set(com, baud);
-    usart_word_length_set(com, USART_WL_8BIT);
+    usart_word_length_set(com, wlen);
     usart_stop_bit_set(com, USART_STB_1BIT);
     usart_parity_config(com, USART_PM_NONE);
     usart_hardware_flow_rts_config(com, USART_RTS_DISABLE);
@@ -41,29 +49,40 @@ static void usart_com_init(uint32_t com, unsigned long baud)
     usart_receive_config(com, USART_RECEIVE_ENABLE);
     usart_transmit_config(com, USART_TRANSMIT_ENABLE);
     usart_enable(com);
+
     return;
 }
 
-static int usart_put_char(uint32_t com, uint8_t ch)
+static int usart_readable(uint32_t com)
 {
-    usart_data_transmit(com, ch);
-    while ( usart_flag_get(com, USART_FLAG_TBE)== RESET){
-    }
+    return (usart_flag_get(com, USART_FLAG_RBNE) != RESET) ? 1 : 0;
+}
+
+static int usart_writable(uint32_t com)
+{
+    return (usart_flag_get(com, USART_FLAG_TBE) != RESET) ? 1 : 0;
+}
+
+static int usart_put_char(uint32_t com, uint32_t wlen, uint8_t ch)
+{
+    usart_data_transmit(com, (int)((ch) & BITS(0, 7 + (wlen >> 12))));
+    while (!usart_writable(com));
 
     return ch;
 }
 
-static int usart_put_buf(uint32_t com, const uint8_t *buffer, size_t size)
+static int usart_put_buf(uint32_t com, uint32_t wlen, const uint8_t *buffer, size_t size)
 {
     for (size_t i = 0; i < size; i++) {
-        usart_put_char(com, buffer[i]);
+        usart_put_char(com, wlen, buffer[i]);
     }
     return size;
 }
 
-static int usart_get_char(uint32_t com)
+static int usart_get_char(uint32_t com, uint32_t wlen)
 {
-    return usart_data_receive(com);
+    while (!usart_readable(com));
+    return (int)(usart_data_receive(com) & BITS(0, 7 + (wlen >> 12)));
 }
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_SERIAL)
@@ -84,12 +103,16 @@ void HardwareSerial::begin(unsigned long baud, uint32_t config, int8_t rxPin, in
         end();
     }
     if(_uartNr == 0 && rxPin < 0 && txPin < 0) {
-        rxPin = 9;
-        txPin = 10;
+        txPin = 9;
+        rxPin = 10;
     }
     if(_uartNr == 1 && rxPin < 0 && txPin < 0) {
-        rxPin = 2;
-        txPin = 3;
+        txPin = 2;
+        rxPin = 3;
+    }
+    if(_uartNr == 2 && rxPin < 0 && txPin < 0) {
+        txPin = 26;
+        rxPin = 27;
     }
 
     if(_uartNr == 0) {
@@ -103,7 +126,8 @@ void HardwareSerial::begin(unsigned long baud, uint32_t config, int8_t rxPin, in
     }
 
     _usartBaud = baud ? baud : 115200U;
-    usart_com_init(_usartCom, _usartBaud);
+    _usartWlen = USART_WL_8BIT;
+    usart_com_init(_usartCom, _usartWlen, _usartBaud);
 }
 
 void HardwareSerial::updateBaudRate(unsigned long baud)
@@ -120,11 +144,11 @@ void HardwareSerial::end()
 
 int HardwareSerial::available(void)
 {
-    return (usart_flag_get(_usartCom, USART_FLAG_RBNE) != RESET) ? 1 : 0;
+    return usart_readable(_usartCom);
 }
 int HardwareSerial::availableForWrite(void)
 {
-    return (usart_flag_get(_usartCom, USART_FLAG_TBE) != RESET) ? 1 : 0;;
+    return usart_writable(_usartCom);
 }
 
 int HardwareSerial::peek(void)
@@ -139,10 +163,7 @@ int HardwareSerial::peek(void)
 
 int HardwareSerial::read(void)
 {
-    if(available()) {
-        return usart_get_char(_usartCom);
-    }
-    return -1;
+    return usart_get_char(_usartCom, _usartWlen);
 }
 
 void HardwareSerial::flush()
@@ -153,13 +174,13 @@ void HardwareSerial::flush()
 
 size_t HardwareSerial::write(uint8_t c)
 {
-    usart_put_char(_usartCom, c);
+    usart_put_char(_usartCom, _usartWlen, c);
     return 1;
 }
 
 size_t HardwareSerial::write(const uint8_t *buffer, size_t size)
 {
-    usart_put_buf(_usartCom, buffer, size);
+    usart_put_buf(_usartCom, _usartWlen, buffer, size);
     return size;
 }
 uint32_t  HardwareSerial::baudRate()
