@@ -21,6 +21,31 @@
 #include <inttypes.h>
 #include "Stream.h"
 
+#if !defined(SERIAL_TX_BUFFER_SIZE)
+#if ((RAMEND - RAMSTART) < 1023)
+#define SERIAL_TX_BUFFER_SIZE 16
+#else
+#define SERIAL_TX_BUFFER_SIZE 64
+#endif
+#endif
+#if !defined(SERIAL_RX_BUFFER_SIZE)
+#if ((RAMEND - RAMSTART) < 1023)
+#define SERIAL_RX_BUFFER_SIZE 16
+#else
+#define SERIAL_RX_BUFFER_SIZE 64
+#endif
+#endif
+#if (SERIAL_TX_BUFFER_SIZE>256)
+typedef uint16_t tx_buffer_index_t;
+#else
+typedef uint8_t tx_buffer_index_t;
+#endif
+#if  (SERIAL_RX_BUFFER_SIZE>256)
+typedef uint16_t rx_buffer_index_t;
+#else
+typedef uint8_t rx_buffer_index_t;
+#endif
+
 // XXX: Those constants should be defined as const int / enums?
 // XXX: shall we use namespaces too?
 #define SERIAL_PARITY_EVEN   (0x1ul)
@@ -82,8 +107,24 @@
 #define SERIAL_7S2           (SERIAL_STOP_BIT_2 | SERIAL_PARITY_SPACE | SERIAL_DATA_7)
 #define SERIAL_8S2           (SERIAL_STOP_BIT_2 | SERIAL_PARITY_SPACE | SERIAL_DATA_8)
 
+#ifdef GD32V_SERIAL_LIGHT
+class HardwareSerial
+#else
 class HardwareSerial : public Stream
+#endif
 {
+  protected:
+    volatile rx_buffer_index_t _rx_buffer_head;
+    volatile rx_buffer_index_t _rx_buffer_tail;
+
+    // Don't put any members after these buffers, since only the first
+    // 32 bytes of this struct can be accessed quickly using the ldd
+    // instruction.
+    unsigned char _rx_buffer[SERIAL_RX_BUFFER_SIZE];
+
+  private:
+    int hwRead(void);
+
   public:
     HardwareSerial(int uart_nr);
     void begin(unsigned long baud, uint32_t config=SERIAL_8N1, int8_t rxPin=-1, int8_t txPin=-1, bool invert=false, unsigned long timeout_ms = 20000UL);
@@ -120,6 +161,14 @@ class HardwareSerial : public Stream
     }
     uint32_t baudRate();
     operator bool() const;
+
+#ifdef GD32V_SERIAL_LIGHT
+    size_t print(const char[]);
+    size_t print(char);
+    size_t println(const char[]);
+    size_t println(char);
+    size_t println(void);
+#endif
 
   protected:
     int _uartNr;

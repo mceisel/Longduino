@@ -151,19 +151,48 @@ int HardwareSerial::availableForWrite(void)
     return usart_writable(_usartCom);
 }
 
+int HardwareSerial::hwRead(void)
+{
+  if (available()) {
+    unsigned char c = usart_get_char(_usartCom, _usartWlen);
+    rx_buffer_index_t i = (unsigned int)(_rx_buffer_head + 1) % SERIAL_RX_BUFFER_SIZE;
+
+    // if we should be storing the received character into the location
+    // just before the tail (meaning that the head would advance to the
+    // current location of the tail), we're about to overflow the buffer
+    // and so we don't write the character or advance the head.
+    if (i != _rx_buffer_tail) {
+      _rx_buffer[_rx_buffer_head] = c;
+      _rx_buffer_head = i;
+      return c;
+    }
+  }
+
+  return -1;
+}
+
 int HardwareSerial::peek(void)
 {
-/*
-    if (available()) {
-        return uartPeek(_usartCom);
-    }
-*/    
-    return -1;
+  if (_rx_buffer_head == _rx_buffer_tail) {
+    return hwRead();
+  } else {
+    return _rx_buffer[_rx_buffer_tail];
+  }
 }
 
 int HardwareSerial::read(void)
 {
-    return usart_get_char(_usartCom, _usartWlen);
+  int c;
+
+  // if the head isn't ahead of the tail, we don't have any characters
+  if (_rx_buffer_head == _rx_buffer_tail) {
+    c = hwRead();
+  } else {
+    c = _rx_buffer[_rx_buffer_tail];
+  }
+  if (c > -1)
+    _rx_buffer_tail = (rx_buffer_index_t)(_rx_buffer_tail + 1) % SERIAL_RX_BUFFER_SIZE;
+  return c;
 }
 
 void HardwareSerial::flush()
@@ -193,3 +222,33 @@ HardwareSerial::operator bool() const
     return true;
 }
 
+#ifdef GD32V_SERIAL_LIGHT
+size_t HardwareSerial::print(const char str[])
+{
+  return write(str);
+}
+
+size_t HardwareSerial::print(char c)
+{
+  return write(c);
+}
+
+size_t HardwareSerial::println(void)
+{
+  return write("\r\n");
+}
+
+size_t HardwareSerial::println(const char c[])
+{
+  size_t n = print(c);
+  n += println();
+  return n;
+}
+
+size_t HardwareSerial::println(char c)
+{
+  size_t n = print(c);
+  n += println();
+  return n;
+}
+#endif
