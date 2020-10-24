@@ -144,8 +144,14 @@ void HardwareSerial::end()
 
 int HardwareSerial::available(void)
 {
-    return usart_readable(_usartCom);
+    int c = ((unsigned int)(SERIAL_RX_BUFFER_SIZE + _rx_buffer_head - _rx_buffer_tail)) % SERIAL_RX_BUFFER_SIZE;
+    if (c > 0) {
+      return c;
+    } else {
+      return usart_readable(_usartCom);
+    }
 }
+
 int HardwareSerial::availableForWrite(void)
 {
     return usart_writable(_usartCom);
@@ -153,7 +159,7 @@ int HardwareSerial::availableForWrite(void)
 
 int HardwareSerial::hwRead(void)
 {
-  if (available()) {
+  if (usart_readable(_usartCom)) {
     unsigned char c = usart_get_char(_usartCom, _usartWlen);
     rx_buffer_index_t i = (unsigned int)(_rx_buffer_head + 1) % SERIAL_RX_BUFFER_SIZE;
 
