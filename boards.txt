@@ -17,7 +17,9 @@ nano.menu.toolsloc.default.compiler.path={runtime.tools.riscv-nuclei-elf-gcc.pat
 
 ## CPU Clock
 nano.menu.clksrc.108=108MHz CPU Clock Frequency
+nano.menu.clksrc.96=96MHz CPU Clock Frequency
 nano.menu.clksrc.108.build.f_cpu=108000000L
+nano.menu.clksrc.96.build.f_cpu=96000000L
 
 ## Burn baud rate
 nano.menu.burn_baudrate.115200=115200 bps
@@ -56,7 +58,9 @@ eval.menu.toolsloc.default.compiler.path={runtime.tools.riscv-nuclei-elf-gcc.pat
 
 ## CPU Clock
 eval.menu.clksrc.108=108MHz CPU Clock Frequency
+eval.menu.clksrc.96=96MHz CPU Clock Frequency
 eval.menu.clksrc.108.build.f_cpu=108000000L
+eval.menu.clksrc.96.build.f_cpu=96000000L
 
 ## Burn baud rate
 eval.menu.burn_baudrate.115200=115200 bps
@@ -98,7 +102,9 @@ wio_lite-risc-v.menu.toolsloc.default.compiler.path={runtime.tools.riscv-nuclei-
 
 ## CPU Clock
 wio_lite-risc-v.menu.clksrc.108=108MHz CPU Clock Frequency
+wio_lite-risc-v.menu.clksrc.96=96MHz CPU Clock Frequency
 wio_lite-risc-v.menu.clksrc.108.build.f_cpu=108000000L
+wio_lite-risc-v.menu.clksrc.96.build.f_cpu=96000000L
 
 ## Burn baud rate
 wio_lite-risc-v.menu.burn_baudrate.115200=115200 bps

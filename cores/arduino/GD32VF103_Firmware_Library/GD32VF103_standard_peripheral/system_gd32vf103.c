@@ -37,6 +37,10 @@ OF SUCH DAMAGE.
 
 #include "gd32vf103.h"
 
+#ifndef F_CPU
+#define F_CPU 108000000L
+#endif
+
 /* system frequency define */
 #define __IRC8M           (IRC8M_VALUE)            /* internal 8 MHz RC oscillator frequency */
 #define __HXTAL           (HXTAL_VALUE)            /* high speed crystal oscillator frequency */
@@ -53,12 +57,27 @@ OF SUCH DAMAGE.
 //#define __SYSTEM_CLOCK_24M_PLL_HXTAL            (uint32_t)(24000000)
 /********************************************************************/
 
-//#define __SYSTEM_CLOCK_36M_PLL_HXTAL            (uint32_t)(36000000)
-//#define __SYSTEM_CLOCK_48M_PLL_HXTAL            (uint32_t)(48000000)
-//#define __SYSTEM_CLOCK_56M_PLL_HXTAL            (uint32_t)(56000000)
-//#define __SYSTEM_CLOCK_72M_PLL_HXTAL            (uint32_t)(72000000)
-//#define __SYSTEM_CLOCK_96M_PLL_HXTAL            (uint32_t)(96000000)
+#if F_CPU==36000000L
+#define __SYSTEM_CLOCK_36M_PLL_HXTAL            (uint32_t)(36000000)
+#else
+#if F_CPU==48000000L
+#define __SYSTEM_CLOCK_48M_PLL_HXTAL            (uint32_t)(48000000)
+#else
+#if F_CPU==56000000L
+#define __SYSTEM_CLOCK_56M_PLL_HXTAL            (uint32_t)(56000000)
+#else
+#if F_CPU==72000000L
+#define __SYSTEM_CLOCK_72M_PLL_HXTAL            (uint32_t)(72000000)
+#else
+#if F_CPU==96000000L
+#define __SYSTEM_CLOCK_96M_PLL_HXTAL            (uint32_t)(96000000)
+#else
 #define __SYSTEM_CLOCK_108M_PLL_HXTAL           (uint32_t)(108000000)
+#endif
+#endif
+#endif
+#endif
+#endif
 
 #define SEL_IRC8M       0x00U
 #define SEL_HXTAL       0x01U
