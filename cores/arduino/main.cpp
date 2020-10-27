@@ -3,6 +3,7 @@
 #include "ArduinoAPI.h"
 #include "Common.h"
 #include "gd32vf103_libopt.h"
+#include "usart_com.h"
 
 
 #define cmb() __asm__ __volatile__ ("" ::: "memory")
@@ -13,7 +14,7 @@ extern "C"{ void * __dso_handle = 0 ;}
  */
 int main( void )
 {
-    Serial.begin(115200);
+    usart_com_init(USART0, USART_WL_8BIT, 115200U);
 
     setup();
   
