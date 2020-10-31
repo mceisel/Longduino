@@ -14,7 +14,7 @@
  		Pin 4 used here for consistency with other Arduino examples
 
 
-  created  PB15 Mar 2011
+  created  28 Mar 2011
   by Limor Fried
   modified 9 Apr 2012
   by Tom Igoe
