@@ -520,13 +520,23 @@ uint8_t const SCK_PIN = 13;
 
 #endif	// Arduino ARC
 
-#elif defined(K210)
+#elif defined(GD32V)
 #include "pins_arduino.h"
 
-uint8_t const SS_PIN = SS;
-uint8_t const MOSI_PIN = MOSI;
-uint8_t const MISO_PIN = MISO;
-uint8_t const SCK_PIN = SCK;
+#define SPI1_SS PB12
+#define SPI1_MOSI PB15
+#define SPI1_MISO PB14
+#define SPI1_SCK PB13
+
+uint8_t const SS_PIN = SPI1_SS;
+uint8_t const MOSI_PIN = SPI1_MOSI;
+uint8_t const MISO_PIN = SPI1_MISO;
+uint8_t const SCK_PIN = SPI1_SCK;
+
+#define SDCARD_SS_PIN SPI1_SS
+#define SDCARD_MOSI_PIN SPI1_MOSI
+#define SDCARD_MISO_PIN SPI1_MISO
+#define SDCARD_SCK_PIN SPI1_SCK
 
 #else
 #error Architecture or board not supported.

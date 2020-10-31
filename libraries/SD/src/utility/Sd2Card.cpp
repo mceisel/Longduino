@@ -20,9 +20,6 @@
 #define USE_SPI_LIB
 #include <Arduino.h>
 #include "Sd2Card.h"
-#include "fpioa.h"
-#include "gpio.h"
-#include "wiring_digital.h"
 //------------------------------------------------------------------------------
 #ifndef SOFTWARE_SPI
 #ifdef USE_SPI_LIB
@@ -272,7 +269,7 @@ uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
   SPSR &= ~(1 << SPI2X);
 #else // USE_SPI_LIB
   spi_.begin();
-  settings = SPISettings(250000, MSBFIRST, SPI_MODE0);
+  settings = SPISettings(4000000, MSBFIRST, SPI_MODE3);
 #endif // USE_SPI_LIB
 #endif // SOFTWARE_SPI
 
@@ -522,13 +519,13 @@ uint8_t Sd2Card::setSckRate(uint8_t sckRateID) {
     | (sckRateID & 2 ? (1 << SPR0) : 0);
 #else // USE_SPI_LIB
   switch (sckRateID) {
-    case 0:  settings = SPISettings(25000000, MSBFIRST, SPI_MODE0); break;
-    case 1:  settings = SPISettings(4000000, MSBFIRST, SPI_MODE0); break;
-    case 2:  settings = SPISettings(2000000, MSBFIRST, SPI_MODE0); break;
-    case 3:  settings = SPISettings(1000000, MSBFIRST, SPI_MODE0); break;
-    case 4:  settings = SPISettings(500000, MSBFIRST, SPI_MODE0); break;
-    case 5:  settings = SPISettings(250000, MSBFIRST, SPI_MODE0); break;
-    default: settings = SPISettings(125000, MSBFIRST, SPI_MODE0);
+    case 0:  settings = SPISettings(25000000, MSBFIRST, SPI_MODE3); break;
+    case 1:  settings = SPISettings(4000000, MSBFIRST, SPI_MODE3); break;
+    case 2:  settings = SPISettings(2000000, MSBFIRST, SPI_MODE3); break;
+    case 3:  settings = SPISettings(1000000, MSBFIRST, SPI_MODE3); break;
+    case 4:  settings = SPISettings(500000, MSBFIRST, SPI_MODE3); break;
+    case 5:  settings = SPISettings(250000, MSBFIRST, SPI_MODE3); break;
+    default: settings = SPISettings(125000, MSBFIRST, SPI_MODE3);
   }
 #endif // USE_SPI_LIB
   return true;
@@ -538,7 +535,7 @@ uint8_t Sd2Card::setSckRate(uint8_t sckRateID) {
 // set the SPI clock frequency
 uint8_t Sd2Card::setSpiClock(uint32_t clock)
 {
-  settings = SPISettings(clock, MSBFIRST, SPI_MODE0);
+  settings = SPISettings(clock, MSBFIRST, SPI_MODE3);
   return true;
 }
 #endif

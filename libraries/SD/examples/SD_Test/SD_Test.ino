@@ -1,15 +1,15 @@
 /*
  * Connect the SD card to the following pins:
  *
- * SD Card | K210     |   K210 pin
+ * SD Card |  GD32V   |  GD32V pin
  *    D2       -
- *    D3       SS          29
- *    CMD      MOSI        28
+ *    D3       SS          PB12
+ *    CMD      MOSI        PB15
  *    VSS      GND         
  *    VDD      3.3V 
- *    CLK      SCK         27
+ *    CLK      SCK         PB13
  *    VSS      GND
- *    D0       MISO        26
+ *    D0       MISO        PB14
  *    D1       -
  */
 #include "FS.h"

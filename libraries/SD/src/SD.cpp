@@ -52,6 +52,8 @@
 
 #include "SD.h"
 
+SPIClass SD_SPI(PB15, PB14, PB13);
+
 namespace SDLib {
 
 // Used by `getNextPathComponent`
@@ -623,6 +625,6 @@ void File::rewindDirectory(void) {
     _file->rewind();
 }
 
-SDClass SD;
+SDClass SD(SD_SPI);
 
 };

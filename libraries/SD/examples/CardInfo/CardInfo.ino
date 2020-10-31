@@ -7,19 +7,19 @@
 
   The circuit:
     SD card attached to SPI bus as follows:
- ** MOSI - pin 28
- ** MISO - pin 26
- ** CLK  - pin 27
- ** CS   - pin 29
+ ** MOSI - pin PB15
+ ** MISO - pin PB14
+ ** CLK  - pin PB13
+ ** CS   - pin PB12
  		Pin 4 used here for consistency with other Arduino examples
 
 
-  created  28 Mar 2011
+  created  PB15 Mar 2011
   by Limor Fried
   modified 9 Apr 2012
   by Tom Igoe
-  modified for k210 30 Mar 2019
-  by Neucrack
+  modified for gd32v 31 Oct 2020
+  by SCP
 */
 // include the SD library:
 #include <SPI.h>
@@ -28,14 +28,14 @@
 // set up variables using the SD utility library functions:
 Sd2Card card; // use object SPI (use SPI1) by default,
               // you can change it by:
-              //                      SPIClass spi(SPI1, 27, 26, 28, -1);
+              //                      SPIClass spi(PB15, PB14, PB13, -1);
               //                      Sd2Card card(spi);
 SdVolume volume;
 SdFile root;
 
 // change this to match your SD shield or module;
-// pin 29 on Maix Go or Maix One Dock or Maix Bit
-const int chipSelect = 29;
+// pin PB12 on Longan Nano
+const int chipSelect = PB12;
 
 void setup() {
   // Open serial communications and wait for port to open:

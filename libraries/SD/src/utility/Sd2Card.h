@@ -177,7 +177,7 @@ uint8_t const SD_CARD_TYPE_SDHC = 3;
 class Sd2Card {
  public:
   /** Construct an instance of Sd2Card. */
-  Sd2Card(void) : errorCode_(0), inBlock_(0), partialBlockRead_(0), type_(0), spi_(SPI) {}
+  Sd2Card(void) : errorCode_(0), inBlock_(0), partialBlockRead_(0), type_(0), spi_(SD_SPI) {}
   Sd2Card(SPIClass& spi):errorCode_(0), inBlock_(0), partialBlockRead_(0), type_(0), spi_(spi) {}
   void setSpi(SPIClass& spi){ spi_ = spi;}
   uint32_t cardSize(void);

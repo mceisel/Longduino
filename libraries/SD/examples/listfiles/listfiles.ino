@@ -6,10 +6,10 @@
 
  The circuit:
  * SD card attached to SPI bus as follows:
- ** MOSI - pin 28
- ** MISO - pin 26
- ** CLK  - pin 27
- ** CS   - pin 29
+ ** MOSI - pin PB15
+ ** MISO - pin PB14
+ ** CLK  - pin PB13
+ ** CS   - pin PB12
  
  created   Nov 2010
  by David A. Mellis
@@ -17,8 +17,8 @@
  by Tom Igoe
  modified 2 Feb 2014
  by Scott Fitzgerald
- modified for k210 30 Mar 2019
- by Neucrack
+ modified for gd32v 31 Oct 2020
+ by SCP
 
  This example code is in the public domain.
 
@@ -37,7 +37,7 @@ void setup() {
 
   Serial.print("Initializing SD card...");
 
-  if (!SD.begin(29)) {
+  if (!SD.begin(PB12)) {
     Serial.println("initialization failed!");
     while (1);
   }

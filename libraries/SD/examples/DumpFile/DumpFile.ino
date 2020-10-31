@@ -6,17 +6,17 @@
 
  The circuit:
  * SD card attached to SPI bus as follows:
- ** MOSI - pin 28
- ** MISO - pin 26
- ** CLK  - pin 27
- ** CS   - pin 29
+ ** MOSI - pin PB15
+ ** MISO - pin PB14
+ ** CLK  - pin PB13
+ ** CS   - pin PB12
 
  created  22 December 2010
  by Limor Fried
  modified 9 Apr 2012
  by Tom Igoe
- modified for k210 30 Mar 2019
- by Neucrack
+ modified for gd32v 31 Oct 2020
+ by SCP
  
  This example code is in the public domain.
 
@@ -25,7 +25,7 @@
 #include <SPI.h>
 #include <SD.h>
 
-const int chipSelect = 29;
+const int chipSelect = PB12;
 
 void setup() {
   // Open serial communications and wait for port to open:

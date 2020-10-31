@@ -7,16 +7,16 @@
  The circuit:
  * analog sensors on analog ins 0, 1, and 2
  * SD card attached to SPI bus as follows:
- ** MOSI - pin 28
- ** MISO - pin 26
- ** CLK  - pin 27
- ** CS   - pin 29
+ ** MOSI - pin PB15
+ ** MISO - pin PB14
+ ** CLK  - pin PB13
+ ** CS   - pin PB12
 
  created  24 Nov 2010
  modified 9 Apr 2012
  by Tom Igoe
- modified for k210 30 Mar 2019
- by Neucrack
+ modified for gd32v 31 Oct 2020
+ by SCP
 
  This example code is in the public domain.
 
@@ -25,7 +25,7 @@
 #include <SPI.h>
 #include <SD.h>
 
-const int chipSelect = 29;
+const int chipSelect = PB12;
 
 void setup() {
   // Open serial communications and wait for port to open:
@@ -40,9 +40,9 @@ void setup() {
   // see if the card is present and can be initialized:
   //  SD object used default SPI object( use SPI1 ),
   //  if you want to modify, as follows:
-  //                                      SPIClass spi(SPI1, 27, 26, 28, -1);
+  //                                      SPIClass spi(PB15, PB14, PB13, -1);
   //                                      SDClass sd(spi);
-  //                                      sd.begin(29)
+  //                                      sd.begin(PB12)
   if (!SD.begin(chipSelect)) {
     Serial.println("Card failed, or not present");
     // don't do anything more:

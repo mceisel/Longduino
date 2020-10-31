@@ -66,7 +66,7 @@ private:
   // my quick&dirty iterator, should be replaced
   SdFile getParentDir(const char *filepath, int *indx);
 public:
-  SDClass(SPIClass& spi=SPI){ card.setSpi(spi); }
+  SDClass(SPIClass& spi=SD_SPI){ card.setSpi(spi); }
   ~SDClass(){}
   // This needs to be called to set up the connection to the SD card
   // before other methods are used.
