@@ -7,7 +7,7 @@
  https://github.com/sipeed/Longan_GD32VF_examples/tree/master/put_into_tf_card
  
  Convert your own images using ffmpeg:
- ffmpeg -i image.png -f rawvideo -pix_fmt rgb565 image.bin
+ ffmpeg -i image.png -f rawvideo -pix_fmt rgb565be image.bin
 */
 
 #include <SD.h>
