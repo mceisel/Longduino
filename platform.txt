@@ -1,6 +1,10 @@
 name=gd32vduino
 version=0.1.1
 
+# arch
+arch=gd32v
+arch_for_c_cpp=GD32V
+
 # Compile variables
 
 ## GCC tools path
@@ -40,11 +44,11 @@ compiler.elf2hex.flags=-R .rel.dyn
 
 compiler.define=-DARDUINO=
 
-compiler.c.extra_flags=-DF_CPU={build.f_cpu} -D{build.board} -DUSE_STDPERIPH_DRIVER -DHXTAL_VALUE={build.hxtal_value}
+compiler.c.extra_flags=-DF_CPU={build.f_cpu} -D{build.board} -D{arch_for_c_cpp} -DARCH={arch_for_c_cpp} -DUSE_STDPERIPH_DRIVER -DHXTAL_VALUE={build.hxtal_value}
 
 compiler.c.elf.extra_flags=
 
-compiler.cpp.extra_flags=-DF_CPU={build.f_cpu} -D{build.board} -DUSE_STDPERIPH_DRIVER -DHXTAL_VALUE={build.hxtal_value}
+compiler.cpp.extra_flags=-DF_CPU={build.f_cpu} -D{build.board} -D{arch_for_c_cpp} -DARCH={arch_for_c_cpp} -DUSE_STDPERIPH_DRIVER -DHXTAL_VALUE={build.hxtal_value}
 
 compiler.S.extra_flags=-DF_CPU={build.f_cpu} -D{build.board} -DUSE_STDPERIPH_DRIVER -DHXTAL_VALUE={build.hxtal_value}
 
