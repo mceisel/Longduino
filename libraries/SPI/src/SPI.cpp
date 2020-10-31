@@ -16,7 +16,8 @@ SPIClass::SPIClass(uint8_t mosi, uint8_t miso, uint8_t sclk, uint8_t ssel)
     , _mosi_bank_clk(RCU_GPIOA)
     , _miso_bank_clk(RCU_GPIOA)
     , _sclk_bank_clk(RCU_GPIOA)
-    , _ssel_bank_clk(RCU_GPIOA) {
+    , _ssel_bank_clk(RCU_GPIOA)
+    , _ssel_hard(0) {
     if (mosi < VARIANT_GPIO_NUM && digitalPinSPIAvailiable(mosi)) {
         _dev = digitalPinToSPIDevice(mosi);
         _dev_clk = digitalPinToSPIClockId(mosi);
@@ -36,12 +37,13 @@ SPIClass::SPIClass(uint8_t mosi, uint8_t miso, uint8_t sclk, uint8_t ssel)
         _sclk_bit = digitalPinToBitMask(sclk);
         _sclk_bank_clk = digitalPinToClkid(sclk);
     }
-    if (ssel < VARIANT_GPIO_NUM) {}
-    _ssel_bank = digitalPinToPort(ssel);
-    _ssel_bit = digitalPinToBitMask(ssel);
-    _ssel_bank_clk = digitalPinToClkid(ssel);
-    if (digitalPinSPIAvailiable(ssel)) {
-        _ssel_hard = 1;
+    if (ssel < VARIANT_GPIO_NUM) {
+        _ssel_bank = digitalPinToPort(ssel);
+        _ssel_bit = digitalPinToBitMask(ssel);
+        _ssel_bank_clk = digitalPinToClkid(ssel);
+        if (digitalPinSPIAvailiable(ssel)) {
+            _ssel_hard = 1;
+        }
     }
 }
 
@@ -100,7 +102,10 @@ void SPIClass::beginTransaction(SPISettings settings) {
     if (settings._freq == 0) {
         return;
     }
-    if (_dev == SPI0 && settings._freq > rcu_clock_freq_get(CK_APB2)) {
+    if (settings._freq < 0xff && (settings._freq & 0xc7)) {
+	return;
+    }
+    else if (_dev == SPI0 && settings._freq > rcu_clock_freq_get(CK_APB2)) {
         return;
     }
     else if (settings._freq > rcu_clock_freq_get(CK_APB1)) {
@@ -186,6 +191,26 @@ void SPIClass::transfer(
     }
 }
 
+uint8_t SPIClass::transfer(uint8_t data)
+{
+    uint8_t ret;
+
+    if (_ssel_hard == 0 && _ssel_bank != 0) {
+        gpio_bit_reset(_ssel_bank, _ssel_bit);
+    }
+
+    while(RESET == spi_i2s_flag_get(_dev, SPI_FLAG_TBE));
+    spi_i2s_data_transmit(_dev, data);
+    while(RESET == spi_i2s_flag_get(_dev, SPI_FLAG_RBNE));
+    ret = spi_i2s_data_receive(_dev);
+
+    if (_ssel_hard == 0 && _ssel_bank != 0) {
+        gpio_bit_set(_ssel_bank, _ssel_bit);
+    }
+
+    return ret;
+}
+
 void SPIClass::setBitOrder(uint8_t bitOrder) {
     _bitOrder = bitOrder;
     beginTransaction();
@@ -203,7 +228,10 @@ void SPIClass::setFrequency(uint32_t freq) {
     if (freq == 0) {
         return;
     }
-    if (_dev == SPI0 && freq > rcu_clock_freq_get(CK_APB2)) {
+    if (freq < 0xff && (freq & 0xc7)) {
+        return;
+    }
+    else if (_dev == SPI0 && freq > rcu_clock_freq_get(CK_APB2)) {
         return;
     }
     else if (freq > rcu_clock_freq_get(CK_APB1)) {
@@ -239,7 +267,10 @@ void SPIClass::beginTransaction() {
     param.frame_size = SPI_FRAMESIZE_8BIT;
     param.nss = _ssel_hard ? SPI_NSS_HARD : SPI_NSS_SOFT;
     uint32_t prescale = 0;
-    if (_dev == SPI0) {
+    if (_freq < 0xff) {
+	prescale = _freq;
+    }
+    else if (_dev == SPI0) {
         prescale = rcu_clock_freq_get(CK_APB2) / _freq - 1;
     }
     else {

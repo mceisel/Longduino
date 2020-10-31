@@ -18,7 +18,10 @@ public:
         : _freq(1000000)
         , _bitOrder(SPI_MSBFIRST)
         , _dataMode(SPI_MODE0) {}
-    SPISettings(uint32_t freq, uint8_t bitOrder, uint8_t dataMode);
+    SPISettings(uint32_t freq, uint8_t bitOrder, uint8_t dataMode)
+        : _freq(freq)
+        , _bitOrder(bitOrder)
+        , _dataMode(dataMode) {}
     uint32_t _freq;
     uint8_t _bitOrder;
     uint8_t _dataMode;
@@ -59,7 +62,7 @@ public:
     void transfer(uint8_t* data, uint32_t size, uint32_t timeout = 1);
     void transfer(
         uint8_t* txdata, uint8_t* rxdata, uint32_t size, uint32_t timeout = 1);
-    uint8_t transfer(uint8_t data){ transfer(&data, 1); return data; }
+    uint8_t transfer(uint8_t data);
 
     void setBitOrder(uint8_t bitOrder);
     void setDataMode(uint8_t dataMode);
@@ -67,6 +70,8 @@ public:
 };
 
 extern SPIClass SPI;
+extern SPIClass SD_SPI;
+
 
 
 #endif //__LIB_SPI_H__
