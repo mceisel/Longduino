@@ -59,6 +59,14 @@ public:
     void drawImage(uint16_t x1, uint16_t y1, uint16_t width, uint16_t height, uint16_t* img);
 
 private:
+    void writecommand(uint8_t c);
+    void writedata(uint8_t c);
+    void writedata16(uint16_t c);
+    void drawWindow(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,uint16_t color, uint16_t lineWidth);
+    void fillWindow(uint16_t xsta,uint16_t ysta,uint16_t xend,uint16_t yend,uint16_t color);
+    void setAddrWindow(uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2);
+    void writeRotation(void);
+
     uint32_t  _freq;
     uint16_t  _screenDir;
 
