@@ -15,6 +15,8 @@
 
 /* SD card chip select */
 #define SDCARD_SS_PIN PB12
+/* LCD chip select */
+#define LCD_SS_PIN    PB2
 
 #ifdef __cplusplus
 extern "C" {
