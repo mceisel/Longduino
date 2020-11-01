@@ -13,6 +13,9 @@
 #define LED_GREEN    PA1
 #define LED_BLUE     PA2
 
+/* SD card chip select */
+#define SDCARD_SS_PIN PB12
+
 #ifdef __cplusplus
 extern "C" {
 #endif

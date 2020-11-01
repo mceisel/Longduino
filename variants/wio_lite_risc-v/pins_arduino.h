@@ -11,6 +11,9 @@
 #define LED_BUILTIN  PA8
 
 
+/* SD card chip select */
+#define SDCARD_SS_PIN PB1
+
 #ifdef __cplusplus
 extern "C" {
 #endif

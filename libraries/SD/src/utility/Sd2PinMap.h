@@ -533,7 +533,9 @@ uint8_t const MOSI_PIN = SPI1_MOSI;
 uint8_t const MISO_PIN = SPI1_MISO;
 uint8_t const SCK_PIN = SPI1_SCK;
 
+#ifndef SDCARD_SS_PIN
 #define SDCARD_SS_PIN SPI1_SS
+#endif
 #define SDCARD_MOSI_PIN SPI1_MOSI
 #define SDCARD_MISO_PIN SPI1_MISO
 #define SDCARD_SCK_PIN SPI1_SCK
