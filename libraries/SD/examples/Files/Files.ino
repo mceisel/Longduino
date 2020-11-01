@@ -7,7 +7,7 @@
  ** MOSI - pin PB15
  ** MISO - pin PB14
  ** CLK  - pin PB13
- ** CS   - pin PB12
+ ** CS   - pin PB12 (Longan Nano) or PB1 (Wio Lite RISC-V)
 
  created   Nov 2010
  by David A. Mellis
@@ -34,7 +34,7 @@ void setup() {
 
   Serial.print("Initializing SD card...");
 
-  if (!SD.begin(PB12)) {
+  if (!SD.begin()) {
     Serial.println("initialization failed!");
     while (1);
   }

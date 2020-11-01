@@ -10,7 +10,7 @@
  ** MOSI - pin PB15
  ** MISO - pin PB14
  ** CLK  - pin PB13
- ** CS   - pin PB12
+ ** CS   - pin PB12 (Longan Nano) or PB1 (Wio Lite RISC-V)
  		Pin 4 used here for consistency with other Arduino examples
 
 
@@ -35,7 +35,7 @@ SdFile root;
 
 // change this to match your SD shield or module;
 // pin PB12 on Longan Nano
-const int chipSelect = PB12;
+const int chipSelect = SDCARD_SS_PIN;
 
 void setup() {
   // Open serial communications and wait for port to open:

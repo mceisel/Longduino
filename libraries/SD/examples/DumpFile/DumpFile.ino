@@ -9,7 +9,7 @@
  ** MOSI - pin PB15
  ** MISO - pin PB14
  ** CLK  - pin PB13
- ** CS   - pin PB12
+ ** CS   - pin PB12 (Longan Nano) or PB1 (Wio Lite RISC-V)
 
  created  22 December 2010
  by Limor Fried
@@ -25,7 +25,7 @@
 #include <SPI.h>
 #include <SD.h>
 
-const int chipSelect = PB12;
+const int chipSelect = SDCARD_SS_PIN;
 
 void setup() {
   // Open serial communications and wait for port to open:

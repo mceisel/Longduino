@@ -3,7 +3,7 @@
  *
  * SD Card |  GD32V   |  GD32V pin
  *    D2       -
- *    D3       SS          PB12
+ *    D3       SS          PB12 (Longan Nano) or PB1 (Wio Lite RISC-V)
  *    CMD      MOSI        PB15
  *    VSS      GND         
  *    VDD      3.3V 
