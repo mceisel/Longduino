@@ -24,20 +24,37 @@
 
 #include <inttypes.h>
 
-#include "pins_arduino.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern usart_buffer_t usart_rx_buffer[3];
+#if !defined(SERIAL_BUFFER_SIZE)
+#if defined(SERIAL_RX_BUFFER_SIZE)
+#define SERIAL_BUFFER_SIZE SERIAL_RX_BUFFER_SIZE
+#endif
+#endif
 
-void usart_com_init(uint32_t com, uint32_t wlen, unsigned long baud);
-int usart_readable(uint32_t com);
-int usart_writable(uint32_t com);
-int usart_put_char(uint32_t com, uint32_t wlen, uint8_t ch);
-int usart_put_buf(uint32_t com, uint32_t wlen, const uint8_t *buffer, size_t size);
-int usart_get_char(uint32_t com, uint32_t wlen);
+#if !defined(SERIAL_BUFFER_SIZE)
+#if ((RAMEND - RAMSTART) < 1023)
+#define SERIAL_BUFFER_SIZE 16
+#else
+#define SERIAL_BUFFER_SIZE 64
+#endif
+#endif
+#if  (SERIAL_BUFFER_SIZE>256)
+typedef uint16_t usart_buffer_index_t;
+#else
+typedef uint8_t usart_buffer_index_t;
+#endif
+
+typedef struct {
+    uint32_t _com;
+    uint32_t wlen;
+    usart_buffer_index_t head;
+    usart_buffer_index_t tail;
+
+    unsigned char data[SERIAL_BUFFER_SIZE];
+} usart_buffer_t;
 
 #ifdef __cplusplus
 } // extern "C"

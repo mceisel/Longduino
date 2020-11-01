@@ -1,4 +1,7 @@
+#include "usart_types.h"
 #include "usart_com.h"
+
+usart_buffer_t usart_rx_buffer[3];
 
 void usart_com_init(uint32_t com, uint32_t wlen, unsigned long baud)
 {
@@ -79,3 +82,39 @@ int usart_get_char(uint32_t com, uint32_t wlen)
     return (int)(usart_data_receive(com) & BITS(0, 7 + (wlen >> 12)));
 }
 
+static int usart_irq_handler(uint8_t _usart_nr)
+{
+  usart_buffer_t* _rx_buffer = &usart_rx_buffer[_usart_nr];
+
+  if (usart_readable(_rx_buffer->_com)) {
+    unsigned char c = usart_get_char(_rx_buffer->_com, _rx_buffer->wlen);
+    usart_buffer_index_t i = (unsigned int)(_rx_buffer->head + 1) % SERIAL_BUFFER_SIZE;
+
+    // if we should be storing the received character into the location
+    // just before the tail (meaning that the head would advance to the
+    // current location of the tail), we're about to overflow the buffer
+    // and so we don't write the character or advance the head.
+    if (i != _rx_buffer->tail) {
+      _rx_buffer->data[_rx_buffer->head] = c;
+      _rx_buffer->head = i;
+      return c;
+    }
+  }
+
+  return -1;
+}
+
+void USART0_IRQHandler(void)
+{
+    usart_irq_handler(0);
+}
+
+void USART1_IRQHandler(void)
+{
+    usart_irq_handler(1);
+}
+
+void USART2_IRQHandler(void)
+{
+    usart_irq_handler(2);
+}

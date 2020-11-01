@@ -20,31 +20,7 @@
 
 #include <inttypes.h>
 #include "Stream.h"
-
-#if !defined(SERIAL_TX_BUFFER_SIZE)
-#if ((RAMEND - RAMSTART) < 1023)
-#define SERIAL_TX_BUFFER_SIZE 16
-#else
-#define SERIAL_TX_BUFFER_SIZE 64
-#endif
-#endif
-#if !defined(SERIAL_RX_BUFFER_SIZE)
-#if ((RAMEND - RAMSTART) < 1023)
-#define SERIAL_RX_BUFFER_SIZE 16
-#else
-#define SERIAL_RX_BUFFER_SIZE 64
-#endif
-#endif
-#if (SERIAL_TX_BUFFER_SIZE>256)
-typedef uint16_t tx_buffer_index_t;
-#else
-typedef uint8_t tx_buffer_index_t;
-#endif
-#if  (SERIAL_RX_BUFFER_SIZE>256)
-typedef uint16_t rx_buffer_index_t;
-#else
-typedef uint8_t rx_buffer_index_t;
-#endif
+#include "usart_types.h"
 
 // XXX: Those constants should be defined as const int / enums?
 // XXX: shall we use namespaces too?
@@ -114,16 +90,7 @@ class HardwareSerial : public Stream
 #endif
 {
   protected:
-    volatile rx_buffer_index_t _rx_buffer_head;
-    volatile rx_buffer_index_t _rx_buffer_tail;
-
-    // Don't put any members after these buffers, since only the first
-    // 32 bytes of this struct can be accessed quickly using the ldd
-    // instruction.
-    unsigned char _rx_buffer[SERIAL_RX_BUFFER_SIZE];
-
-  private:
-    int hwRead(void);
+    usart_buffer_t* _rx_buffer;
 
   public:
     HardwareSerial(int uart_nr);

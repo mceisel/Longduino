@@ -47,7 +47,26 @@ void HardwareSerial::begin(unsigned long baud, uint32_t config, int8_t rxPin, in
 
     _usartBaud = baud ? baud : 115200U;
     _usartWlen = USART_WL_8BIT;
+
+    _rx_buffer = &usart_rx_buffer[_uartNr];
+    _rx_buffer->_com = _usartCom;
+    _rx_buffer->wlen = _usartWlen;
+    _rx_buffer->head = 0;
+    _rx_buffer->tail = 0;
+
+    /* USART interrupt configuration */
+    eclic_global_interrupt_enable();
+    eclic_priority_group_set(ECLIC_PRIGROUP_LEVEL3_PRIO1);
+    if(_uartNr == 0)
+        eclic_irq_enable(USART0_IRQn, 1, 0);
+    else if(_uartNr == 1)
+        eclic_irq_enable(USART1_IRQn, 1, 0);
+    else if(_uartNr == 2)
+        eclic_irq_enable(USART2_IRQn, 1, 0);
+
     usart_com_init(_usartCom, _usartWlen, _usartBaud);
+
+    usart_interrupt_enable(_usartCom, USART_INT_RBNE);
 }
 
 void HardwareSerial::updateBaudRate(unsigned long baud)
@@ -64,7 +83,8 @@ void HardwareSerial::end()
 
 int HardwareSerial::available(void)
 {
-    int c = ((unsigned int)(SERIAL_RX_BUFFER_SIZE + _rx_buffer_head - _rx_buffer_tail)) % SERIAL_RX_BUFFER_SIZE;
+    int c = ((unsigned int)(SERIAL_BUFFER_SIZE + _rx_buffer->head - _rx_buffer->tail)) % SERIAL_BUFFER_SIZE;
+
     if (c > 0) {
       return c;
     } else {
@@ -77,32 +97,12 @@ int HardwareSerial::availableForWrite(void)
     return usart_writable(_usartCom);
 }
 
-int HardwareSerial::hwRead(void)
-{
-  if (usart_readable(_usartCom)) {
-    unsigned char c = usart_get_char(_usartCom, _usartWlen);
-    rx_buffer_index_t i = (unsigned int)(_rx_buffer_head + 1) % SERIAL_RX_BUFFER_SIZE;
-
-    // if we should be storing the received character into the location
-    // just before the tail (meaning that the head would advance to the
-    // current location of the tail), we're about to overflow the buffer
-    // and so we don't write the character or advance the head.
-    if (i != _rx_buffer_tail) {
-      _rx_buffer[_rx_buffer_head] = c;
-      _rx_buffer_head = i;
-      return c;
-    }
-  }
-
-  return -1;
-}
-
 int HardwareSerial::peek(void)
 {
-  if (_rx_buffer_head == _rx_buffer_tail) {
-    return hwRead();
+  if (_rx_buffer->head == _rx_buffer->tail) {
+    return -1;
   } else {
-    return _rx_buffer[_rx_buffer_tail];
+    return _rx_buffer->data[_rx_buffer->tail];
   }
 }
 
@@ -111,13 +111,13 @@ int HardwareSerial::read(void)
   int c;
 
   // if the head isn't ahead of the tail, we don't have any characters
-  if (_rx_buffer_head == _rx_buffer_tail) {
-    c = hwRead();
+  if (_rx_buffer->head == _rx_buffer->tail) {
+    c = -1;
   } else {
-    c = _rx_buffer[_rx_buffer_tail];
+    c = _rx_buffer->data[_rx_buffer->tail];
   }
   if (c > -1)
-    _rx_buffer_tail = (rx_buffer_index_t)(_rx_buffer_tail + 1) % SERIAL_RX_BUFFER_SIZE;
+    _rx_buffer->tail = (usart_buffer_index_t)(_rx_buffer->tail + 1) % SERIAL_BUFFER_SIZE;
   return c;
 }
 
