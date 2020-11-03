@@ -1,6 +1,7 @@
 menu.clksrc=CPU Clock Frequency
 menu.burn_baudrate=Burn Baud Rate
 menu.toolsloc=Tool Install Location
+menu.USBMode=USB Mode
 
 ##################################################
 ############# Sipeed Longan Nano Board ###############
@@ -46,6 +47,15 @@ nano.upload.tool=serial
 nano.upload.maximum_size=81920
 nano.build.ldscript={runtime.platform.path}/cores/arduino/GD32VF103_Firmware_Library/RISCV/env_Eclipse/GD32VF103xB.lds
 
+nano.build.usb_mode=DEVICE
+
+nano.menu.USBMode.Device=Device
+nano.menu.USBMode.Device.build.usb_mode=DEVICE
+nano.menu.USBMode.Host=Host
+nano.menu.USBMode.Host.build.usb_mode=HOST
+nano.menu.USBMode.OTG=OTG
+nano.menu.USBMode.OTG.build.usb_mode=OTG
+
 
 ##################################################
 ############# GD32VF103 EVAL Board ###############
@@ -86,6 +96,15 @@ eval.upload.tool=gdlink
 ## Limit is the 128KiB Flash. Assume half is used for something else.
 eval.upload.maximum_size=65536
 eval.build.ldscript={runtime.platform.path}/cores/arduino/GD32VF103_Firmware_Library/RISCV/env_Eclipse/GD32VF103xB.lds
+
+eval.build.usb_mode=DEVICE
+
+eval.menu.USBMode.Device=Device
+eval.menu.USBMode.Device.build.usb_mode=DEVICE
+eval.menu.USBMode.Host=Host
+eval.menu.USBMode.Host.build.usb_mode=HOST
+eval.menu.USBMode.OTG=OTG
+eval.menu.USBMode.OTG.build.usb_mode=OTG
 
 ###################################################
 ############# Seeed Wio Lite Risc-V ###############
@@ -130,4 +149,13 @@ wio_lite-risc-v.upload.tool=serial
 ## Limit is the 128KiB Flash. Assume it is partially used for something else.
 wio_lite-risc-v.upload.maximum_size=81920
 wio_lite-risc-v.build.ldscript={runtime.platform.path}/cores/arduino/GD32VF103_Firmware_Library/RISCV/env_Eclipse/GD32VF103xB.lds
+
+wio_lite-risc-v.build.usb_mode=DEVICE
+
+wio_lite-risc-v.menu.USBMode.Device=Device
+wio_lite-risc-v.menu.USBMode.Device.build.usb_mode=DEVICE
+wio_lite-risc-v.menu.USBMode.Host=Host
+wio_lite-risc-v.menu.USBMode.Host.build.usb_mode=HOST
+wio_lite-risc-v.menu.USBMode.OTG=OTG
+wio_lite-risc-v.menu.USBMode.OTG.build.usb_mode=OTG
 
