@@ -1,6 +1,7 @@
 menu.clksrc=CPU Clock Frequency
 menu.burn_baudrate=Burn Baud Rate
 menu.toolsloc=Tool Install Location
+menu.PartitionScheme=Partition Scheme
 menu.USBMode=USB Mode
 
 ##################################################
@@ -47,7 +48,18 @@ nano.upload.tool=serial
 nano.upload.maximum_size=81920
 nano.build.ldscript={runtime.platform.path}/cores/arduino/GD32VF103_Firmware_Library/RISCV/env_Eclipse/GD32VF103xB.lds
 
+nano.build.partitions=default
 nano.build.usb_mode=DEVICE
+
+nano.menu.PartitionScheme.default=Default (64KB APP/64KB Other)
+nano.menu.PartitionScheme.default.build.partitions=default
+nano.menu.PartitionScheme.default.upload.maximum_size=65536
+nano.menu.PartitionScheme.medium=Medium (80KB APP/48KB Other)
+nano.menu.PartitionScheme.medium.build.partitions=medium
+nano.menu.PartitionScheme.medium.upload.maximum_size=81920
+nano.menu.PartitionScheme.high=High (96KB APP/32KB Other)
+nano.menu.PartitionScheme.high.build.partitions=high
+nano.menu.PartitionScheme.high.upload.maximum_size=98304
 
 nano.menu.USBMode.Device=Device
 nano.menu.USBMode.Device.build.usb_mode=DEVICE
@@ -97,7 +109,18 @@ eval.upload.tool=gdlink
 eval.upload.maximum_size=65536
 eval.build.ldscript={runtime.platform.path}/cores/arduino/GD32VF103_Firmware_Library/RISCV/env_Eclipse/GD32VF103xB.lds
 
+eval.build.partitions=default
 eval.build.usb_mode=DEVICE
+
+eval.menu.PartitionScheme.default=Default (64KB APP/64KB Other)
+eval.menu.PartitionScheme.default.build.partitions=default
+eval.menu.PartitionScheme.default.upload.maximum_size=65536
+eval.menu.PartitionScheme.medium=Medium (80KB APP/48KB Other)
+eval.menu.PartitionScheme.medium.build.partitions=medium
+eval.menu.PartitionScheme.medium.upload.maximum_size=81920
+eval.menu.PartitionScheme.high=High (96KB APP/32KB Other)
+eval.menu.PartitionScheme.high.build.partitions=high
+eval.menu.PartitionScheme.high.upload.maximum_size=98304
 
 eval.menu.USBMode.Device=Device
 eval.menu.USBMode.Device.build.usb_mode=DEVICE
@@ -150,7 +173,18 @@ wio_lite-risc-v.upload.tool=serial
 wio_lite-risc-v.upload.maximum_size=81920
 wio_lite-risc-v.build.ldscript={runtime.platform.path}/cores/arduino/GD32VF103_Firmware_Library/RISCV/env_Eclipse/GD32VF103xB.lds
 
+wio_lite-risc-v.build.partitions=default
 wio_lite-risc-v.build.usb_mode=DEVICE
+
+wio_lite-risc-v.menu.PartitionScheme.default=Default (64KB APP/64KB Other)
+wio_lite-risc-v.menu.PartitionScheme.default.build.partitions=default
+wio_lite-risc-v.menu.PartitionScheme.default.upload.maximum_size=65536
+wio_lite-risc-v.menu.PartitionScheme.medium=Medium (80KB APP/48KB Other)
+wio_lite-risc-v.menu.PartitionScheme.medium.build.partitions=medium
+wio_lite-risc-v.menu.PartitionScheme.medium.upload.maximum_size=81920
+wio_lite-risc-v.menu.PartitionScheme.high=High (96KB APP/32KB Other)
+wio_lite-risc-v.menu.PartitionScheme.high.build.partitions=high
+wio_lite-risc-v.menu.PartitionScheme.high.upload.maximum_size=98304
 
 wio_lite-risc-v.menu.USBMode.Device=Device
 wio_lite-risc-v.menu.USBMode.Device.build.usb_mode=DEVICE
