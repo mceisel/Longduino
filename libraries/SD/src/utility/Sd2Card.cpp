@@ -269,7 +269,7 @@ uint8_t Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
   SPSR &= ~(1 << SPI2X);
 #else // USE_SPI_LIB
   spi_.begin();
-  settings = SPISettings(4000000, MSBFIRST, SPI_MODE3);
+  settings = SPISettings(SPI_PSC_32, MSBFIRST, SPI_MODE3);
 #endif // USE_SPI_LIB
 #endif // SOFTWARE_SPI
 
@@ -519,13 +519,13 @@ uint8_t Sd2Card::setSckRate(uint8_t sckRateID) {
     | (sckRateID & 2 ? (1 << SPR0) : 0);
 #else // USE_SPI_LIB
   switch (sckRateID) {
-    case 0:  settings = SPISettings(25000000, MSBFIRST, SPI_MODE3); break;
-    case 1:  settings = SPISettings(4000000, MSBFIRST, SPI_MODE3); break;
-    case 2:  settings = SPISettings(2000000, MSBFIRST, SPI_MODE3); break;
-    case 3:  settings = SPISettings(1000000, MSBFIRST, SPI_MODE3); break;
-    case 4:  settings = SPISettings(500000, MSBFIRST, SPI_MODE3); break;
-    case 5:  settings = SPISettings(250000, MSBFIRST, SPI_MODE3); break;
-    default: settings = SPISettings(125000, MSBFIRST, SPI_MODE3);
+    case 0:  settings = SPISettings(SPI_PSC_2, MSBFIRST, SPI_MODE3); break;
+    case 1:  settings = SPISettings(SPI_PSC_4, MSBFIRST, SPI_MODE3); break;
+    case 2:  settings = SPISettings(SPI_PSC_8, MSBFIRST, SPI_MODE3); break;
+    case 3:  settings = SPISettings(SPI_PSC_16, MSBFIRST, SPI_MODE3); break;
+    case 4:  settings = SPISettings(SPI_PSC_32, MSBFIRST, SPI_MODE3); break;
+    case 5:  settings = SPISettings(SPI_PSC_64, MSBFIRST, SPI_MODE3); break;
+    default: settings = SPISettings(SPI_PSC_128, MSBFIRST, SPI_MODE3);
   }
 #endif // USE_SPI_LIB
   return true;
