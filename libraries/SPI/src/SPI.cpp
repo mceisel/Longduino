@@ -246,6 +246,7 @@ void SPIClass::beginTransaction() {
         return;
     }
     spi_parameter_struct param;
+    spi_struct_para_init(&param);
     switch (_dataMode) {
     case SPI_MODE0:
         param.clock_polarity_phase = SPI_CK_PL_LOW_PH_1EDGE;
