@@ -19,6 +19,7 @@
 #pragma once
 
 #include <inttypes.h>
+#include <stdarg.h>
 #include <stdio.h> // for size_t
 
 #include "WString.h"
@@ -53,6 +54,8 @@ class Print
     size_t write(const char *buffer, size_t size) {
       return write((const uint8_t *)buffer, size);
     }
+
+    size_t printf(const char * format, ...)  __attribute__ ((format (printf, 2, 3)));
 
     size_t print(const __FlashStringHelper *);
     size_t print(const String &);
