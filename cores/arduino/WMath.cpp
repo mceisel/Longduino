@@ -62,7 +62,7 @@ uint64_t getSeed() {
     rtc_lwoff_wait();
     rtc_configuration_mode_exit();
     rtc_lwoff_wait();
-    uint64_t ret;
+    uint64_t ret = 0;
     uint32_t virtualCounter = 0;
     for (size_t i = 0; i < 64; i++) {
         ret = ret << 1;
