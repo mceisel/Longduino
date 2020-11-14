@@ -12,24 +12,35 @@ typedef struct _handler_list_t {
 
 static handler_list_t* handler_list = 0;
 
+#define digitalPinToIRQn(p) PIN_MAP[p].irqn
+#define digitalPinToPortSource(p) (p >> 4)
+#define digitalPinToPinSource(p) (p & 0xF)
+#define digitalPinToExtiLine(p) BIT(p & 0xF)
+
 static void attachInterruptInternal(handler_list_t* ptr, uint8_t pinId,
     void* callback, PinStatus mode, void* param) {
-    eclic_irq_enable(PIN_MAP[pinId].irqn, 0, 0);
-    gpio_exti_source_select(pinId >> 4, pinId & 0xF);
+    /* enable and set key EXTI interrupt to the lowest priority */
+    eclic_global_interrupt_enable();
+    eclic_irq_enable(digitalPinToIRQn(pinId),1, 1);
+
+    /* connect key EXTI line to key GPIO pin */
+    gpio_exti_source_select(digitalPinToPortSource(pinId), digitalPinToPinSource(pinId));
+
+    /* configure key EXTI line */
     if (mode == RISING) {
-        exti_init(pinId & 0xF, EXTI_INTERRUPT, EXTI_TRIG_RISING);
+        exti_init(digitalPinToExtiLine(pinId), EXTI_INTERRUPT, EXTI_TRIG_RISING);
     }
     else if (mode == FALLING) {
-        exti_init(pinId & 0xF, EXTI_INTERRUPT, EXTI_TRIG_FALLING);
+        exti_init(digitalPinToExtiLine(pinId), EXTI_INTERRUPT, EXTI_TRIG_FALLING);
     }
     else if (mode == CHANGE) {
-        exti_init(pinId & 0xF, EXTI_INTERRUPT, EXTI_TRIG_BOTH);
+        exti_init(digitalPinToExtiLine(pinId), EXTI_INTERRUPT, EXTI_TRIG_BOTH);
     }
     else if (mode == RISING) {
-        exti_init(pinId & 0xF, EXTI_INTERRUPT, EXTI_TRIG_NONE);
+        exti_init(digitalPinToExtiLine(pinId), EXTI_INTERRUPT, EXTI_TRIG_NONE);
     }
-    exti_interrupt_flag_clear(pinId & 0xF);
-    exti_interrupt_enable(pinId & 0xF);
+    exti_interrupt_flag_clear(digitalPinToExtiLine(pinId));
+    exti_interrupt_enable(digitalPinToExtiLine(pinId));
     ptr->handler = callback;
     ptr->pinId = pinId;
     ptr->mode = mode;
@@ -50,7 +61,7 @@ void attachInterruptParam(
     }
     if (handler_list == 0) {
         handler_list = calloc(1, sizeof(handler_list_t));
-        attachInterruptInternal(handler_list, pinId, callback, mode, 0);
+        attachInterruptInternal(handler_list, pinId, callback, mode, param);
         handler_list->next = 0;
         return;
     }
@@ -58,7 +69,7 @@ void attachInterruptParam(
     handler_list_t* previousPtr = handler_list;
     while (ptr != 0) {
         if (ptr->pinId == pinId) {
-            attachInterruptInternal(ptr, pinId, callback, mode, 0);
+            attachInterruptInternal(ptr, pinId, callback, mode, param);
             return;
         }
         previousPtr = ptr;
@@ -66,7 +77,7 @@ void attachInterruptParam(
     }
     previousPtr->next = calloc(1, sizeof(handler_list_t));
     ptr = previousPtr->next;
-    attachInterruptInternal(ptr, pinId, callback, mode, 0);
+    attachInterruptInternal(ptr, pinId, callback, mode, param);
     ptr->next = 0;
     return;
 }
@@ -105,12 +116,13 @@ void detachInterrupt(pin_size_t pinId) {
 static void generic_IRQHandler(void) {
     handler_list_t* ptr = handler_list;
     while (ptr != 0) {
-        if (exti_interrupt_flag_get(ptr->pinId & 0xF)) {
-            if (ptr->param == 0) {}
-            else {
-                ((void (*)(void*))(ptr->handler))(ptr->param);
+        if (exti_interrupt_flag_get(digitalPinToExtiLine(ptr->pinId)) != RESET) {
+            if (ptr->param == 0) {
+                ((voidFuncPtr)ptr->handler)();
+            } else {
+                ((voidFuncPtrParam)ptr->handler)(ptr->param);
             }
-            exti_interrupt_flag_clear(ptr->pinId & 0xF);
+            exti_interrupt_flag_clear(digitalPinToExtiLine(ptr->pinId));
             break;
         }
         ptr = ptr->next;
