@@ -6,16 +6,16 @@ struct Button {
     bool pressed;
 };
 
-Button button1 = {23, 0, false};
-Button button2 = {18, 0, false};
+Button button1 = {PB0, 0, false};
+Button button2 = {BUTTON_BUILTIN, 0, false};
 
-void IRAM_ATTR isr(void* arg) {
+void IRAM_ATTR isr1(void* arg) {
     Button* s = static_cast<Button*>(arg);
     s->numberKeyPresses += 1;
     s->pressed = true;
 }
 
-void IRAM_ATTR isr() {
+void IRAM_ATTR isr2() {
     button2.numberKeyPresses += 1;
     button2.pressed = true;
 }
@@ -23,18 +23,18 @@ void IRAM_ATTR isr() {
 void setup() {
     Serial.begin(115200);
     pinMode(button1.PIN, INPUT_PULLUP);
-    attachInterruptArg(button1.PIN, isr, &button1, FALLING);
+    attachInterruptArg(button1.PIN, isr1, &button1, FALLING);
     pinMode(button2.PIN, INPUT_PULLUP);
-    attachInterrupt(button2.PIN, isr, FALLING);
+    attachInterrupt(button2.PIN, isr2, FALLING);
 }
 
 void loop() {
     if (button1.pressed) {
-        Serial.printf("Button 1 has been pressed %u times\n", button1.numberKeyPresses);
+        Serial.printf("Button 1 has been pressed %lu times\n", button1.numberKeyPresses);
         button1.pressed = false;
     }
     if (button2.pressed) {
-        Serial.printf("Button 2 has been pressed %u times\n", button2.numberKeyPresses);
+        Serial.printf("Button 2 has been pressed %lu times\n", button2.numberKeyPresses);
         button2.pressed = false;
     }
     static uint32_t lastMillis = 0;
