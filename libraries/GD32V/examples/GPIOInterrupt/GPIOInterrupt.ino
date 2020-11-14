@@ -9,6 +9,13 @@ struct Button {
 Button button1 = {PB0, 0, false};
 Button button2 = {BUTTON_BUILTIN, 0, false};
 
+void led_toggle(pin_size_t ledPin) {
+    if (digitalRead(ledPin) == HIGH)
+        digitalWrite(ledPin, LOW);
+    else
+        digitalWrite(ledPin, HIGH);
+}
+
 void IRAM_ATTR isr1(void* arg) {
     Button* s = static_cast<Button*>(arg);
     s->numberKeyPresses += 1;
@@ -22,6 +29,7 @@ void IRAM_ATTR isr2() {
 
 void setup() {
     Serial.begin(115200);
+    pinMode(LED_BUILTIN, OUTPUT);
     pinMode(button1.PIN, INPUT_PULLUP);
     attachInterruptArg(button1.PIN, isr1, &button1, FALLING);
     pinMode(button2.PIN, INPUT_PULLUP);
@@ -34,6 +42,7 @@ void loop() {
         button1.pressed = false;
     }
     if (button2.pressed) {
+        led_toggle(LED_BUILTIN);
         Serial.printf("Button 2 has been pressed %lu times\n", button2.numberKeyPresses);
         button2.pressed = false;
     }
