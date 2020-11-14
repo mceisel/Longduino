@@ -42,7 +42,9 @@ static void attachInterruptInternal(handler_list_t* ptr, uint8_t pinId,
         exti_init(digitalPinToExtiLine(pinId), EXTI_INTERRUPT, EXTI_TRIG_NONE);
     }
     exti_interrupt_flag_clear(digitalPinToExtiLine(pinId));
+
     exti_interrupt_enable(digitalPinToExtiLine(pinId));
+
     ptr->handler = callback;
     ptr->pinId = pinId;
     ptr->mode = mode;
@@ -89,6 +91,7 @@ void detachInterrupt(pin_size_t pinId) {
         return;
     }
     if (handler_list->pinId == pinId) {
+        exti_interrupt_disable(digitalPinToExtiLine(pinId));
         if (handler_list->next == 0) {
             free(handler_list);
             handler_list = 0;
@@ -105,6 +108,7 @@ void detachInterrupt(pin_size_t pinId) {
     handler_list_t* previousPtr = handler_list;
     while (ptr != 0) {
         if (ptr->pinId == pinId) {
+            exti_interrupt_disable(digitalPinToExtiLine(pinId));
             previousPtr->next = ptr->next;
             free(ptr);
             return;
