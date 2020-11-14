@@ -162,7 +162,7 @@ wio_lite-risc-v.build.variant=wio_lite_risc-v
 wio_lite-risc-v.build.core=arduino
 
 ## This sets a define for use in the compiled code.
-wio_lite-risc-v.build.board=BOARD_WIO_LITE_RISC-V
+wio_lite-risc-v.build.board=BOARD_WIO_LITE_RISCV
 wio_lite-risc-v.build.sdata.size=512
 
 ## This selects the tool from "programmers.txt"
