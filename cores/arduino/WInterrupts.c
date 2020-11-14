@@ -12,6 +12,8 @@ typedef struct _handler_list_t {
 
 static handler_list_t* handler_list = 0;
 
+#define EXTI_HANDLER_ATTR
+
 #define digitalPinToIRQn(p) PIN_MAP[p].irqn
 #define digitalPinToPortSource(p) (p >> 4)
 #define digitalPinToPinSource(p) (p & 0xF)
@@ -130,14 +132,14 @@ static void generic_IRQHandler(void) {
     return;
 }
 
-void __attribute__((interrupt)) EXTI0_IRQHandler(void) { generic_IRQHandler(); }
-void __attribute__((interrupt)) EXTI1_IRQHandler(void) { generic_IRQHandler(); }
-void __attribute__((interrupt)) EXTI2_IRQHandler(void) { generic_IRQHandler(); }
-void __attribute__((interrupt)) EXTI3_IRQHandler(void) { generic_IRQHandler(); }
-void __attribute__((interrupt)) EXTI4_IRQHandler(void) { generic_IRQHandler(); }
-void __attribute__((interrupt)) EXTI5_9_IRQHandler(void) {
+void EXTI_HANDLER_ATTR EXTI0_IRQHandler(void) { generic_IRQHandler(); }
+void EXTI_HANDLER_ATTR EXTI1_IRQHandler(void) { generic_IRQHandler(); }
+void EXTI_HANDLER_ATTR EXTI2_IRQHandler(void) { generic_IRQHandler(); }
+void EXTI_HANDLER_ATTR EXTI3_IRQHandler(void) { generic_IRQHandler(); }
+void EXTI_HANDLER_ATTR EXTI4_IRQHandler(void) { generic_IRQHandler(); }
+void EXTI_HANDLER_ATTR EXTI5_9_IRQHandler(void) {
     generic_IRQHandler();
 }
-void __attribute__((interrupt)) EXTI10_15_IRQHandler(void) {
+void EXTI_HANDLER_ATTR EXTI10_15_IRQHandler(void) {
     generic_IRQHandler();
 }
