@@ -77,6 +77,10 @@ typedef enum {
 #define sq(x) ((x)*(x))
 #endif
 
+#ifndef IRAM_ATTR
+#define IRAM_ATTR
+#endif
+
 typedef void (*voidFuncPtr)(void);
 typedef void (*voidFuncPtrParam)(void*);
 
@@ -134,6 +138,8 @@ pin_size_t shiftIn(pin_size_t dataPin, pin_size_t clockPin, BitOrder bitOrder);
 void attachInterrupt(pin_size_t interruptNumber, voidFuncPtr callback, PinStatus mode);
 void attachInterruptParam(pin_size_t interruptNumber, voidFuncPtrParam callback, PinStatus mode, void* param);
 void detachInterrupt(pin_size_t interruptNumber);
+
+#define attachInterruptArg(p,c,a,m) attachInterruptParam(p,c,m,a)
 
 void setup(void);
 void loop(void);
