@@ -154,6 +154,7 @@ const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM] = {
     {&gpioc, 0, 0, 0, 14, 0, 0}, /* PC14 */
     {&gpioc, 0, 0, 0, 15, 0, 0}, /* PC15 */
 
+#if VARIANT_GPIO_NUM > 48
     {&gpiod, 0, 0, 0, 0, 0, 0}, /* PD0 */
     {&gpiod, 0, 0, 0, 1, 0, 0}, /* PD1 */
     {&gpiod, 0, 0, 0, 2, 0, 0}, /* PD2 */
@@ -170,7 +171,9 @@ const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM] = {
     {&gpiod, 0, 0, 0, 13, 0, 0}, /* PD13 */
     {&gpiod, 0, 0, 0, 14, 0, 0}, /* PD14 */
     {&gpiod, 0, 0, 0, 15, 0, 0}, /* PD15 */
+#endif
 
+#if VARIANT_GPIO_NUM > 64
     {&gpioe, 0, 0, 0, 0, 0, 0}, /* PE0 */
     {&gpioe, 0, 0, 0, 1, 0, 0}, /* PE1 */
     {&gpioe, 0, 0, 0, 2, 0, 0}, /* PE2 */
@@ -187,6 +190,7 @@ const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM] = {
     {&gpioe, 0, 0, 0, 13, 0, 0}, /* PE13 */
     {&gpioe, 0, 0, 0, 14, 0, 0}, /* PE14 */
     {&gpioe, 0, 0, 0, 15, 0, 0}, /* PE15 */
+#endif
 };
 
 
