@@ -36,7 +36,7 @@ int analogRead(pin_size_t pinNumber) {
         return -1;
     }
     testInitAnalogRead();
-#ifdef BOARD_SIPEED_LONGAN_NANO
+#ifndef NO_ADC_PIN_MAP
     if (PIN_MAP[pinNumber].adc_device != 0
         && PIN_MAP[pinNumber].gpio_device != 0) {
         adc_inserted_channel_config(
@@ -59,6 +59,7 @@ void analogWrite(pin_size_t pinNumber, int value) {
     if (pinNumber > VARIANT_GPIO_NUM || value < 0 || value > 255) {
         return;
     }
+#ifndef NO_TIMER_PIN_MAP
     timer_oc_parameter_struct timer_ocintpara;
     timer_parameter_struct timer_initpara;
     rcu_periph_clock_enable(PIN_MAP[pinNumber].timer_device->clk_id);
@@ -98,4 +99,5 @@ void analogWrite(pin_size_t pinNumber, int value) {
     }
     timer_auto_reload_shadow_enable(PIN_MAP[pinNumber].timer_device->timer_dev);
     timer_enable(PIN_MAP[pinNumber].timer_device->timer_dev);
+#endif
 }

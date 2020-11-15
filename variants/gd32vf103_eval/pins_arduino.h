@@ -45,6 +45,9 @@ typedef struct _gd32v_pin_info_t
     //uint8_t adc_channel;
 } gd32v_pin_info_t;
 
+#define NO_TIMER_PIN_MAP
+#define NO_ADC_PIN_MAP
+
 #define VARIANT_GPIO_NUM (80)
 
 extern const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM];
