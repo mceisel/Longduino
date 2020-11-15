@@ -39,7 +39,7 @@ gpio_dev_t gpioe = {
 gpio_dev_t * const GPIO_E = &gpioe;
 
 
-extern const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM] = {
+const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM] = {
 /*
     gpio_dev *gpio_device;      GPIO device 
     timer_dev *timer_device;    Pin's timer device, if any.
