@@ -112,3 +112,8 @@ tools.serial.program.pattern="{path}{cmd}" -g 0x08000000 -b {build.burn_baudrate
 tools.dfu.cmd=dfu-util
 tools.dfu.path={runtime.tools.gd32vflash.path}/
 tools.dfu.program.pattern="{path}{cmd}" -d {build.vid}:{build.pid} -a 0 --dfuse-address 0x08000000:leave -D "{build.path}/{build.project_name}.bin"
+
+## DFU with suffix
+tools.dfuflash.cmd=dfu-flash
+tools.dfuflash.path={runtime.tools.gd32vflash.path}/
+tools.dfuflash.program.pattern="{path}{cmd}" {build.vid} {build.pid} "{build.path}/{build.project_name}.bin"

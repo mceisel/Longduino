@@ -30,3 +30,9 @@ dfu.communication=usb
 dfu.program.params.verbose=-v
 dfu.program.params.quiet=-q
 dfu.program.tool=dfu
+
+dfuflash.name=DFU with suffix GD32V
+dfuflash.communication=usb
+dfuflash.program.params.verbose=-v
+dfuflash.program.params.quiet=-q
+dfuflash.program.tool=dfuflash
