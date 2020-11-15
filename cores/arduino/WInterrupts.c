@@ -12,9 +12,28 @@ typedef struct _handler_list_t {
 
 static handler_list_t* handler_list = 0;
 
+static const IRQn_Type EXTI_IRQ_MAP[16] = {
+    EXTI0_IRQn,
+    EXTI1_IRQn,
+    EXTI2_IRQn,
+    EXTI3_IRQn,
+    EXTI4_IRQn,
+    EXTI5_9_IRQn,
+    EXTI5_9_IRQn,
+    EXTI5_9_IRQn,
+    EXTI5_9_IRQn,
+    EXTI5_9_IRQn,
+    EXTI10_15_IRQn,
+    EXTI10_15_IRQn,
+    EXTI10_15_IRQn,
+    EXTI10_15_IRQn,
+    EXTI10_15_IRQn,
+    EXTI10_15_IRQn,
+};
+
 #define EXTI_HANDLER_ATTR
 
-#define digitalPinToIRQn(p) PIN_MAP[p].irqn
+#define digitalPinToIRQn(p) EXTI_IRQ_MAP[p & 0xF]
 #define digitalPinToPortSource(p) (p >> 4)
 #define digitalPinToPinSource(p) (p & 0xF)
 #define digitalPinToExtiLine(p) BIT(p & 0xF)
