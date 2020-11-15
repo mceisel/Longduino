@@ -2,24 +2,25 @@
 #include "pins_arduino.h"
 
 uint8_t analog_reference = DEFAULT;
-uint8_t b_adc_initialized = 0;
+uint8_t b_adc_initialized[2] = { 0, 0 };
 
-static void testInitAnalogRead(void) {
-    if (b_adc_initialized == 0) {
+static void testInitAnalogRead(uint32_t adc_dev, rcu_periph_enum clk_id) {
+    uint8_t idx = (adc_dev == ADC1) ? 1 : 0;
+    if (b_adc_initialized[idx] == 0) {
         /* configure clock */
-        rcu_periph_clock_enable(RCU_ADC0);
+        rcu_periph_clock_enable(clk_id);
         rcu_adc_clock_config(RCU_CKADC_CKAPB2_DIV2);
-        /* reset ADC0 */
-        adc_deinit(ADC0);
-        /* configure ADC0 */
+        /* reset ADC0/1 */
+        adc_deinit(adc_dev);
+        /* configure ADC0/1 */
         adc_external_trigger_source_config(
-            ADC0, ADC_INSERTED_CHANNEL, ADC0_1_EXTTRIG_INSERTED_NONE);
-        adc_external_trigger_config(ADC0, ADC_INSERTED_CHANNEL, ENABLE);
-        adc_channel_length_config(ADC0, ADC_INSERTED_CHANNEL, 1);
-        adc_enable(ADC0);
+            adc_dev, ADC_INSERTED_CHANNEL, ADC0_1_EXTTRIG_INSERTED_NONE);
+        adc_external_trigger_config(adc_dev, ADC_INSERTED_CHANNEL, ENABLE);
+        adc_channel_length_config(adc_dev, ADC_INSERTED_CHANNEL, 1);
+        adc_enable(adc_dev);
         delayMicroseconds(1000);
-        adc_calibration_enable(ADC0);
-        b_adc_initialized = 1;
+        adc_calibration_enable(adc_dev);
+        b_adc_initialized[idx] = 1;
     }
 }
 
@@ -32,21 +33,27 @@ void analogReference(AnalogReferenceMode mode) {
 }
 
 int analogRead(pin_size_t pinNumber) {
+    uint32_t adc_dev = ADC0;
+    rcu_periph_enum clk_id = RCU_ADC0;
     if (pinNumber > VARIANT_GPIO_NUM) {
         return -1;
     }
-    testInitAnalogRead();
-#ifndef NO_ADC_PIN_MAP
+#ifdef NO_ADC_PIN_MAP
+    testInitAnalogRead(adc_dev, clk_id);
+#else
     if (PIN_MAP[pinNumber].adc_device != 0
         && PIN_MAP[pinNumber].gpio_device != 0) {
+        adc_dev = PIN_MAP[pinNumber].adc_device->adc_dev;
+        clk_id = PIN_MAP[pinNumber].adc_device->clk_id;
+        testInitAnalogRead(adc_dev, clk_id);
         adc_inserted_channel_config(
-            ADC0, 0, PIN_MAP[pinNumber].adc_channel, ADC_SAMPLETIME_1POINT5);
-        adc_flag_clear(ADC0, ADC_FLAG_EOIC);
-        adc_software_trigger_enable(ADC0, ADC_INSERTED_CHANNEL);
-        while (adc_flag_get(ADC0, ADC_FLAG_EOIC) != SET) {
+            adc_dev, 0, PIN_MAP[pinNumber].adc_channel, ADC_SAMPLETIME_1POINT5);
+        adc_flag_clear(adc_dev, ADC_FLAG_EOIC);
+        adc_software_trigger_enable(adc_dev, ADC_INSERTED_CHANNEL);
+        while (adc_flag_get(adc_dev, ADC_FLAG_EOIC) != SET) {
             delayMicroseconds(1);
         }
-        return ADC_IDATA0(ADC0);
+        return ADC_IDATA0(adc_dev);
     }
     else {
         return -1;
