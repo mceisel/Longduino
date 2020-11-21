@@ -1,17 +1,41 @@
 #include "Arduino.h"
 
+static void buzzBegin(pin_size_t pinNumber)
+{
+    pinMode(pinNumber, OUTPUT);
+}
+
+void buzz(pin_size_t pinNumber, unsigned int frequency, unsigned long duration) {
+  long delayValue = 1000000 / frequency / 2; // calculate the delay value between transitions
+  //// 1 second's worth of microseconds, divided by the frequency, then split in half since
+  //// there are two phases to each cycle
+  long numCycles = frequency * duration / 1000; // calculate the number of cycles for proper timing
+  //// multiply frequency, which is really cycles per second, by the number of seconds to
+  //// get the total number of cycles to produce
+  buzzBegin(pinNumber);
+  for (long i=0; i < numCycles; i++) { // for the calculated length of time...
+    digitalWrite(pinNumber, HIGH); // write the buzzer pin high to push out the diaphram
+    delayMicroseconds(delayValue); // wait for the calculated delay value
+    digitalWrite(pinNumber, LOW); // write the buzzer pin low to pull back the diaphram
+    delayMicroseconds(delayValue); // wait again or the calculated delay value
+  }
+}
+
+#ifndef NO_TIMER_PIN_MAP
 static void toneBegin(pin_size_t pinNumber)
 {
     pinMode(pinNumber, OUTPUT_ANALOG);
 }
+#endif
 
 void tone(pin_size_t pinNumber, unsigned int frequency, unsigned long duration)
 {
     if (pinNumber > VARIANT_GPIO_NUM || frequency <= 0 || frequency > 1000000) {
         return;
     }
-    toneBegin(pinNumber);
-#ifndef NO_TIMER_PIN_MAP
+#ifdef NO_TIMER_PIN_MAP
+    buzz(pinNumber, frequency,  duration);
+#else
     timer_oc_parameter_struct timer_ocinitpara;
     timer_parameter_struct timer_initpara;
     uint64_t _start_time;
@@ -19,6 +43,13 @@ void tone(pin_size_t pinNumber, unsigned int frequency, unsigned long duration)
     int32_t value = 127;
     int32_t prescaler = (int32_t)(1000000 / frequency / 2);
     uint16_t clockdiv = TIMER_CKDIV_DIV1;
+
+    if (!PIN_MAP[pinNumber].timer_device || !PIN_MAP[pinNumber].adc_device) {
+      /* fallback to buzz for pins without PWM */
+      buzz(pinNumber, frequency,  duration);
+      return;
+    }
+    toneBegin(pinNumber);
 
     if (prescaler > 65535)
     {
