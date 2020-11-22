@@ -56,6 +56,8 @@ public:
     virtual void setRotation(uint8_t r);
     virtual void invertDisplay(boolean invert);
 
+    uint16_t color565(uint8_t r, uint8_t g, uint8_t b);
+
     void drawImage(uint16_t x1, uint16_t y1, uint16_t width, uint16_t height, uint16_t* img);
 
 private:

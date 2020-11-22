@@ -397,6 +397,15 @@ void Sipeed_GD32V_LCD::invertDisplay(boolean invert) {
     writeRotation();
 }
 
+/***************************************************************************************
+** Function name:           color565
+** Description:             convert three 8 bit RGB levels to a 16 bit colour
+*value
+***************************************************************************************/
+uint16_t Sipeed_GD32V_LCD::color565(uint8_t r, uint8_t g, uint8_t b) {
+  return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
+}
+
 void Sipeed_GD32V_LCD::drawImage(uint16_t x1, uint16_t y1, uint16_t width, uint16_t height, uint16_t* img)
 {
     int i;
