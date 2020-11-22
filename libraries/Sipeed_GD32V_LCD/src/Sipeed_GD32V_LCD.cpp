@@ -189,7 +189,7 @@ void Sipeed_GD32V_LCD::writedata16(uint16_t c) {
     CS_H;
 }
 
-void Sipeed_GD32V_LCD::drawWindow(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,uint16_t color, uint16_t lineWidth)
+void Sipeed_GD32V_LCD::drawWindow(int16_t x1, int16_t y1, int16_t x2, int16_t y2,uint16_t color, int16_t lineWidth)
 {
     fillWindow(x1,y1,x2,y1+lineWidth-1,color);
     fillWindow(x1,y1,x1+lineWidth-1,y2,color);
@@ -197,9 +197,17 @@ void Sipeed_GD32V_LCD::drawWindow(uint16_t x1, uint16_t y1, uint16_t x2, uint16_
     fillWindow(x2-lineWidth+1,y1,x2,y2,color);
 }
 
-void Sipeed_GD32V_LCD::fillWindow(uint16_t xsta,uint16_t ysta,uint16_t xend,uint16_t yend,uint16_t color)
+void Sipeed_GD32V_LCD::fillWindow(int16_t xsta,int16_t ysta,int16_t xend,int16_t yend,uint16_t color)
 {
     uint16_t i,j;
+    if(xsta<0)xsta=0;
+    if(ysta<0)ysta=0;
+    if(xend<0)return;
+    if(yend<0)return;
+    if(_width<xsta)return;
+    if(_height<ysta)return;
+    if(_width<xend)xend=_width-1;
+    if(_height<yend)yend=_height-1;
     setAddrWindow(xsta,ysta,xend,yend);      //设置光标位置
     for(i=ysta;i<=yend;i++)
     {
@@ -406,7 +414,7 @@ uint16_t Sipeed_GD32V_LCD::color565(uint8_t r, uint8_t g, uint8_t b) {
   return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
 }
 
-void Sipeed_GD32V_LCD::drawImage(uint16_t x1, uint16_t y1, uint16_t width, uint16_t height, uint16_t* img)
+void Sipeed_GD32V_LCD::drawImage(int16_t x1, int16_t y1, int16_t width, int16_t height, uint16_t* img)
 {
     int i;
     setAddrWindow(x1, y1, x1+width-1, y1+height-1);

@@ -58,14 +58,14 @@ public:
 
     uint16_t color565(uint8_t r, uint8_t g, uint8_t b);
 
-    void drawImage(uint16_t x1, uint16_t y1, uint16_t width, uint16_t height, uint16_t* img);
+    void drawImage(int16_t x1, int16_t y1, int16_t width, int16_t height, uint16_t* img);
 
 private:
     void writecommand(uint8_t c);
     void writedata(uint8_t c);
     void writedata16(uint16_t c);
-    void drawWindow(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,uint16_t color, uint16_t lineWidth);
-    void fillWindow(uint16_t xsta,uint16_t ysta,uint16_t xend,uint16_t yend,uint16_t color);
+    void drawWindow(int16_t x1, int16_t y1, int16_t x2, int16_t y2,uint16_t color, int16_t lineWidth);
+    void fillWindow(int16_t xsta,int16_t ysta,int16_t xend,int16_t yend,uint16_t color);
     void setAddrWindow(uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2);
     void writeRotation(void);
 
