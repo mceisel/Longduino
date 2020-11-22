@@ -22,6 +22,7 @@
 #include <avr/pgmspace.h>
 #endif
 #include <Arduino.h>
+#pragma GCC diagnostic ignored "-Waddress-of-packed-member"
 //------------------------------------------------------------------------------
 // callback function for date/time
 void (*SdFile::dateTime_)(uint16_t* date, uint16_t* time) = NULL;
