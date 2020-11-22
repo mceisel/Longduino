@@ -24,9 +24,9 @@ static uint8_t lcdBuffer[LCD_W*LCD_BUF_H*2];
 bool sdMounted = false;
 
 
-void DrawImageFromFile(char* path)
+void DrawImageFromFile(const char* path)
 {
-    int offset = 0;
+    uint32_t offset = 0;
     uint16_t top = 0;
     uint32_t dataSize = 0;
     File dataFile;
@@ -79,7 +79,7 @@ void DrawImageFromFile(char* path)
         lcd.setTextSize(2);
         lcd.setTextColor(COLOR_RED);
         lcd.setCursor(0,32);
-        lcd.print("File "); lcd.print(path); lcd.println(" not found.");
+        lcd.printf("File %s not found.", path);
     }
 }
 
