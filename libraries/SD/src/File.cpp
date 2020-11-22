@@ -98,15 +98,17 @@ int File::read(void *buf, uint16_t nbyte) {
 long File::read(void *buf, uint32_t nbyte) {
   if (!_file) 
     return 0;
+  uint8_t* ptr = (uint8_t*)buf;
   uint32_t bytesToRead = nbyte;
   uint16_t ret, readBytesOnece;
   while(bytesToRead)
   {
     readBytesOnece = (bytesToRead>65000) ? 65000 : bytesToRead;
-    ret = (uint16_t)_file->read(buf+(nbyte-bytesToRead), readBytesOnece);
+    ret = (uint16_t)_file->read(ptr, readBytesOnece);
     if(ret == 0xffff)
       return -1;
     bytesToRead -= ret;
+    ptr += ret;
   }
   return nbyte;
 }
