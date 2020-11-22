@@ -44,7 +44,7 @@ void tone(pin_size_t pinNumber, unsigned int frequency, unsigned long duration)
     int32_t prescaler = (int32_t)(1000000 / frequency / 2);
     uint16_t clockdiv = TIMER_CKDIV_DIV1;
 
-    if (!PIN_MAP[pinNumber].timer_device || !PIN_MAP[pinNumber].adc_device) {
+    if (!PIN_MAP[pinNumber].timer_device || (pinNumber == PA9)) {
       /* fallback to buzz for pins without PWM */
       buzz(pinNumber, frequency,  duration);
       return;
@@ -100,6 +100,10 @@ void tone(pin_size_t pinNumber, unsigned int frequency, unsigned long duration)
 
     /* auto-reload preload enable */
     timer_auto_reload_shadow_enable(PIN_MAP[pinNumber].timer_device->timer_dev);
+    if (PIN_MAP[pinNumber].timer_device->timer_dev == TIMER0) {
+        /* TIMER0 output enable */
+        timer_primary_output_config(PIN_MAP[pinNumber].timer_device->timer_dev, ENABLE);
+    }
     _start_time = millis();
     /* TIMER counter enable */
     timer_enable(PIN_MAP[pinNumber].timer_device->timer_dev);
