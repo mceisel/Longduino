@@ -189,6 +189,19 @@ void Sipeed_GD32V_LCD::writedata16(uint16_t c) {
     CS_H;
 }
 
+void Sipeed_GD32V_LCD::drawImage(int16_t x1, int16_t y1, int16_t width, int16_t height, uint16_t* img)
+{
+    int i;
+    setAddrWindow(x1, y1, x1+width-1, y1+height-1);
+    CS_L;
+    for(i=0;i<(width*height);i++)
+    {
+        SPI.transfer(img[i]);
+        SPI.transfer(img[i]>>8);
+    }
+    CS_H;
+}
+
 void Sipeed_GD32V_LCD::drawWindow(int16_t x1, int16_t y1, int16_t x2, int16_t y2,uint16_t color, int16_t lineWidth)
 {
     fillWindow(x1,y1,x2,y1+lineWidth-1,color);
@@ -412,17 +425,4 @@ void Sipeed_GD32V_LCD::invertDisplay(boolean invert) {
 ***************************************************************************************/
 uint16_t Sipeed_GD32V_LCD::color565(uint8_t r, uint8_t g, uint8_t b) {
   return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
-}
-
-void Sipeed_GD32V_LCD::drawImage(int16_t x1, int16_t y1, int16_t width, int16_t height, uint16_t* img)
-{
-    int i;
-    setAddrWindow(x1, y1, x1+width-1, y1+height-1);
-    CS_L;
-    for(i=0;i<(width*height);i++)
-    {
-        SPI.transfer(img[i]);
-        SPI.transfer(img[i]>>8);
-    }
-    CS_H;
 }

@@ -38,6 +38,8 @@ public:
 
     boolean      begin( uint32_t freq = 15000000, uint16_t color = 0xffff );
 
+    void drawImage(int16_t x1, int16_t y1, int16_t width, int16_t height, uint16_t* img);
+
     virtual void drawPixel(int16_t x, int16_t y, uint16_t color);
     virtual void writePixel(int16_t x, int16_t y, uint16_t color);
     virtual void writeFillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
@@ -57,8 +59,6 @@ public:
     virtual void invertDisplay(boolean invert);
 
     uint16_t color565(uint8_t r, uint8_t g, uint8_t b);
-
-    void drawImage(int16_t x1, int16_t y1, int16_t width, int16_t height, uint16_t* img);
 
 private:
     void writecommand(uint8_t c);
