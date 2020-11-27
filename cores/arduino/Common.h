@@ -125,6 +125,8 @@ int analogRead(pin_size_t pinNumber);
 void analogReference(AnalogReferenceMode mode);
 void analogWrite(pin_size_t pinNumber, int value);
 
+#define analogWritable(p) (PIN_MAP[p].timer_device && (p != PA9))
+
 uint64_t millis(void);
 uint64_t micros(void);
 void delay(unsigned long);

@@ -44,7 +44,7 @@ void tone(pin_size_t pinNumber, unsigned int frequency, unsigned long duration)
     int32_t prescaler = (int32_t)(1000000 / frequency / 2);
     uint16_t clockdiv = TIMER_CKDIV_DIV1;
 
-    if (!PIN_MAP[pinNumber].timer_device || (pinNumber == PA9)) {
+    if (!analogWritable(pinNumber)) {
       /* fallback to buzz for pins without PWM */
       buzz(pinNumber, frequency,  duration);
       return;
