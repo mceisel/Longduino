@@ -26,12 +26,19 @@ const int highestPin = 2;
 
 
 void doWrite(pin_size_t pinNumber, int value) {
-  if (value == 255)
+  if (value == 255) {
+    pinMode(pinNumber, OUTPUT);
     digitalWrite(pinNumber, HIGH);
-  else if (analogWritable(pinNumber))
-    analogWrite(pinNumber, value);
-  else
+  } else if (value == 0)  {
+    pinMode(pinNumber, OUTPUT);
     digitalWrite(pinNumber, LOW);
+  } else if (analogWritable(pinNumber)) {
+    pinMode(pinNumber, OUTPUT_ANALOG);
+    analogWrite(pinNumber, value);
+  } else {
+    pinMode(pinNumber, OUTPUT);
+    digitalWrite(pinNumber, LOW);
+  }
 }
 
 void doRGB(int mask, int brightness)
