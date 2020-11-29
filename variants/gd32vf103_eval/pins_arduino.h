@@ -10,6 +10,9 @@
 /* LEDs */
 #define LED_BUILTIN  PC0
 
+/* Buttons */
+#define BUTTON_BUILTIN PC4
+
 #ifdef __cplusplus
 extern "C" {
 #endif
