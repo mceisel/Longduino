@@ -13,6 +13,9 @@
 #define LED_GREEN    PA1
 #define LED_BLUE     PA2
 
+/* Buttons */
+#define BUTTON_BUILTIN PA8
+
 /* SD card chip select */
 #define SDCARD_SS_PIN PB12
 /* LCD chip select */
