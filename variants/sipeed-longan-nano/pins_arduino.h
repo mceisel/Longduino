@@ -26,6 +26,7 @@ extern "C" {
 #endif
 
 #define VARIANT_GPIO_NUM (48)
+#define VARIANT_TIMER_NUM (5)
 
 /* Pin aliases: these give the GPIO port/bit for each pin as an
  * enum. These are optional, but recommended. They make it easier to
@@ -78,6 +79,7 @@ typedef struct _gd32v_pin_info_t
 } gd32v_pin_info_t;
 
 extern const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM];
+extern const timer_dev_t * TIMER_MAP[VARIANT_TIMER_NUM];
 
 #define digitalPinToPort(p) ((PIN_MAP[p].gpio_device)->gpio_port)
 #define digitalPinToBitMask(p) (BIT(PIN_MAP[p].gpio_bit))
