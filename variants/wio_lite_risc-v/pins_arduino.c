@@ -193,4 +193,10 @@ const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM] = {
 #endif
 };
 
-
+const timer_dev_t * TIMER_MAP[VARIANT_TIMER_NUM] = {
+  TIMER_0,
+  TIMER_1,
+  TIMER_2,
+  TIMER_3,
+  TIMER_4,
+};
