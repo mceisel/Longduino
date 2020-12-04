@@ -40,7 +40,9 @@ static void attachTickerInternal(ticker_handler_list_t* ptr, uint8_t tickId,
     void* callback, uint32_t microseconds, void* param) {
     uint32_t timerCh = TIMER_CH_0;
 
-    uint32_t prescaler = 108;
+    uint32_t prescaler = rcu_clock_freq_get(CK_APB1) != rcu_clock_freq_get(CK_AHB)
+        ? 2 * rcu_clock_freq_get(CK_APB1) / 1000000
+        : rcu_clock_freq_get(CK_APB1) / 1000000;
     uint32_t period = microseconds;
     uint32_t value = period/2;
     uint16_t clockdiv = TIMER_CKDIV_DIV1;
