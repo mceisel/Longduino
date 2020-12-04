@@ -44,23 +44,23 @@ static void attachTickerInternal(ticker_handler_list_t* ptr, uint8_t tickId,
         ? 2 * rcu_clock_freq_get(CK_APB1) / 1000000
         : rcu_clock_freq_get(CK_APB1) / 1000000;
     uint32_t period = microseconds;
-    uint32_t value = period/2;
+    uint32_t value = period;
     uint16_t clockdiv = TIMER_CKDIV_DIV1;
 
     while (period >= 100000)
     {
        prescaler *= 10;
        period /= 10;
-       value = period/2;
     }
 
     if (prescaler > 65535)
     {
       prescaler/=2;
       period *= 2;
-      value = period;
       clockdiv = TIMER_CKDIV_DIV2;
     }
+
+    value = period;
 
     /* enable and set key TIMER interrupt to the lowest priority */
     eclic_global_interrupt_enable();
