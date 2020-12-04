@@ -42,11 +42,22 @@ static void attachTickerInternal(ticker_handler_list_t* ptr, uint8_t tickId,
 
     uint32_t prescaler = 108;
     uint32_t period = microseconds;
+    uint32_t value = period/2;
+    uint16_t clockdiv = TIMER_CKDIV_DIV1;
 
     while (period >= 100000)
     {
        prescaler *= 10;
        period /= 10;
+       value = period/2;
+    }
+
+    if (prescaler > 65535)
+    {
+      prescaler/=2;
+      period *= 2;
+      value = period;
+      clockdiv = TIMER_CKDIV_DIV2;
     }
 
     /* enable and set key TIMER interrupt to the lowest priority */
@@ -54,10 +65,10 @@ static void attachTickerInternal(ticker_handler_list_t* ptr, uint8_t tickId,
     eclic_irq_enable(TIMER_IRQ_MAP[tickId],1, 1);
 
     /* ----------------------------------------------------------------------------
-    TIMER1 Configuration: 
-    TIMER1CLK = SystemCoreClock/108 = 1MHz.
-    TIMER1 configuration is timing mode, and the timing is 0.2s(4000/20000 = 0.2s).
-    CH0 update rate = TIMER1 counter clock/CH0CV = 20000/4000 = 5Hz.
+    TIMER1 Configuration example:
+    TIMER1CLK = SystemCoreClock/10800 = 10KHz.
+    TIMER1 configuration is timing mode, and the timing is 0.2s(2000/10000 = 0.2s).
+    CH0 update rate = TIMER1 counter clock/CH0CV = 10000/2000 = 5Hz.
     ---------------------------------------------------------------------------- */
     timer_oc_parameter_struct timer_ocinitpara;
     timer_parameter_struct timer_initpara;
@@ -68,11 +79,11 @@ static void attachTickerInternal(ticker_handler_list_t* ptr, uint8_t tickId,
     /* initialize TIMER init parameter struct */
     timer_struct_para_init(&timer_initpara);
     /* TIMER configuration */
-    timer_initpara.prescaler         = prescaler-1; // 107;
+    timer_initpara.prescaler         = prescaler-1;
     timer_initpara.alignedmode       = TIMER_COUNTER_EDGE;
     timer_initpara.counterdirection  = TIMER_COUNTER_UP;
-    timer_initpara.period            = period; // microseconds;
-    timer_initpara.clockdivision     = TIMER_CKDIV_DIV1;
+    timer_initpara.period            = period;
+    timer_initpara.clockdivision     = clockdiv;
     timer_init(tickerIdToTimerId(tickId), &timer_initpara);
 
     /* initialize TIMER channel output parameter struct */
@@ -84,7 +95,7 @@ static void attachTickerInternal(ticker_handler_list_t* ptr, uint8_t tickId,
     timer_channel_output_config(tickerIdToTimerId(tickId), timerCh, &timer_ocinitpara);
 
     /* CH0 configuration in OC timing mode */
-    timer_channel_output_pulse_value_config(tickerIdToTimerId(tickId), timerCh, timer_initpara.period/2);
+    timer_channel_output_pulse_value_config(tickerIdToTimerId(tickId), timerCh, value);
     timer_channel_output_mode_config(tickerIdToTimerId(tickId), timerCh, TIMER_OC_MODE_TIMING);
     timer_channel_output_shadow_config(tickerIdToTimerId(tickId), timerCh, TIMER_OC_SHADOW_DISABLE);
 
