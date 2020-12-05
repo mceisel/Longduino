@@ -38,6 +38,37 @@ gpio_dev_t gpioe = {
 };
 gpio_dev_t * const GPIO_E = &gpioe;
 
+// TODO: add timer remap descriptor
+
+timer_dev_t timer0 = {
+    .timer_dev = TIMER0,
+    .clk_id = RCU_TIMER0,
+};
+timer_dev_t * const TIMER_0 = &timer0;
+
+timer_dev_t timer1 = {
+    .timer_dev = TIMER1,
+    .clk_id = RCU_TIMER1,
+};
+timer_dev_t * const TIMER_1 = &timer1;
+
+timer_dev_t timer2 = {
+    .timer_dev = TIMER2,
+    .clk_id = RCU_TIMER2,
+};
+timer_dev_t * const TIMER_2 = &timer2;
+
+timer_dev_t timer3 = {
+    .timer_dev = TIMER3,
+    .clk_id = RCU_TIMER3,
+};
+timer_dev_t * const TIMER_3 = &timer3;
+
+timer_dev_t timer4 = {
+    .timer_dev = TIMER4,
+    .clk_id = RCU_TIMER4,
+};
+timer_dev_t * const TIMER_4 = &timer4;
 
 const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM] = {
 /*
