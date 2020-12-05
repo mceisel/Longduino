@@ -1,4 +1,4 @@
-// See LICENSE for license details.
+/* See LICENSE for license details.*/
 /* Derived from <linux/const.h> */
 
 #ifndef _RISCV_CONST_H

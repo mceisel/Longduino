@@ -3,7 +3,9 @@
 #define _NUCLEI_SYS_STUB_H
 
 #include <stdint.h>
+#if   defined (__GNUC__)
 #include <unistd.h>
+#endif
 
 void write_hex(int fd, unsigned long int hex);
 

@@ -2,11 +2,12 @@
     \file    gd32vf103.h
     \brief   general definitions for GD32VF103
 
-    \version 2019-6-5, V1.0.0, firmware for GD32VF103
+    \version 2019-06-05, V1.0.0, firmware for GD32VF103
+    \version 2020-08-04, V1.1.0, firmware for GD32VF103
 */
 
 /*
-    Copyright (c) 2019, GigaDevice Semiconductor Inc.
+    Copyright (c) 2020, GigaDevice Semiconductor Inc.
 
     Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
@@ -59,7 +60,7 @@ OF SUCH DAMAGE.
    #ifdef GD32VF103R_START
    #define HXTAL_VALUE    ((uint32_t)25000000) /*!< value of the external oscillator in Hz */
    #define HXTAL_VALUE_8M  HXTAL_VALUE
-   #elif defined(GD32VF103V_EVAL) || defined(GD32VF103C_START)
+#elif defined(GD32VF103V_EVAL) || defined(GD32VF103C_START) || defined(GD32VF103T_START)
    #define HXTAL_VALUE    ((uint32_t)8000000) /*!< value of the external oscillator in Hz */
    #define HXTAL_VALUE_25M  HXTAL_VALUE
    #else
@@ -177,7 +178,7 @@ typedef enum IRQn
 /* enum definitions */
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} EventStatus, ControlStatus;
 //typedef enum {FALSE = 0, TRUE = !FALSE} bool;
-typedef enum {RESET = 0, SET = 1,MAX = 0X7FFFFFFF} FlagStatus;
+typedef enum {RESET = 0, SET = !RESET} FlagStatus;
 typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrStatus;
 
 /* bit operations */

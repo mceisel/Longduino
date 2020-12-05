@@ -1,4 +1,4 @@
-// See LICENSE file for licence details
+/* See LICENSE file for licence details */
 
 #ifndef N200_TIMER_H
 #define N200_TIMER_H
@@ -12,7 +12,7 @@
 
 #define TIMER_CTRL_ADDR           0xd1000000
 #define TIMER_REG(offset)         _REG32(TIMER_CTRL_ADDR, offset)
-#define TIMER_FREQ	            ((uint32_t)SystemCoreClock/4)  //units HZ
+#define TIMER_FREQ                ((uint32_t)SystemCoreClock/4)
 
 #endif
 
