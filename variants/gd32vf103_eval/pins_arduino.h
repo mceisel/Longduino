@@ -20,7 +20,7 @@ extern "C" {
 /* GD32VF103VBT6 package LQFP100 (all pins available) */
 #define VARIANT_GPIO_NUM (80)
 #define VARIANT_SPI_NUM (3)
-#define VARIANT_TIMER_NUM (5)
+#define VARIANT_TIMER_NUM (7)
 #define NO_TIMER_PIN_MAP
 #define NO_ADC_PIN_MAP
 
