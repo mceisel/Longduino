@@ -23,12 +23,15 @@ static const IRQn_Type TIMER_IRQ_MAP[7] = {
     TIMER6_IRQn,
 };
 
-static const uint32_t TIMER_INT_CH_MAP[4] = {
+static const uint32_t TIMER_INT_CH_MAP[5] = {
     TIMER_INT_CH0,
     TIMER_INT_CH1,
     TIMER_INT_CH2,
     TIMER_INT_CH3,
+    TIMER_INT_UP,
 };
+
+#define TIMER_UP ((uint16_t)0x0004U)
 
 #define TIMER_HANDLER_ATTR
 
@@ -46,6 +49,10 @@ static void attachTickerInternal(ticker_handler_list_t* ptr, uint8_t tickId,
     uint32_t period = microseconds;
     uint32_t value = period;
     uint16_t clockdiv = TIMER_CKDIV_DIV1;
+
+    /* TIMER5 and TIMER6 support UP only */
+    if (tickId > 4)
+       timerCh = TIMER_UP;
 
     while (period >= 100000)
     {
@@ -88,20 +95,26 @@ static void attachTickerInternal(ticker_handler_list_t* ptr, uint8_t tickId,
     timer_initpara.clockdivision     = clockdiv;
     timer_init(tickerIdToTimerId(tickId), &timer_initpara);
 
-    /* initialize TIMER channel output parameter struct */
-    timer_channel_output_struct_para_init(&timer_ocinitpara);
-    /* CH0,CH1 and CH2 configuration in OC timing mode */
-    timer_ocinitpara.outputstate  = TIMER_CCX_ENABLE;
-    timer_ocinitpara.ocpolarity   = TIMER_OC_POLARITY_HIGH;
-    timer_ocinitpara.ocidlestate  = TIMER_OC_IDLE_STATE_LOW;
-    timer_channel_output_config(tickerIdToTimerId(tickId), timerCh, &timer_ocinitpara);
+    if (tickerChToIntCh(timerCh) == TIMER_INT_UP) {
+        timer_update_event_enable(tickerIdToTimerId(tickId));
+        timer_flag_clear(tickerIdToTimerId(tickId), TIMER_FLAG_UP);
+        timer_update_source_config(tickerIdToTimerId(tickId), TIMER_UPDATE_SRC_GLOBAL);
+    } else {
+        /* initialize TIMER channel output parameter struct */
+        timer_channel_output_struct_para_init(&timer_ocinitpara);
+        /* CH0,CH1 and CH2 configuration in OC timing mode */
+        timer_ocinitpara.outputstate  = TIMER_CCX_ENABLE;
+        timer_ocinitpara.ocpolarity   = TIMER_OC_POLARITY_HIGH;
+        timer_ocinitpara.ocidlestate  = TIMER_OC_IDLE_STATE_LOW;
+        timer_channel_output_config(tickerIdToTimerId(tickId), timerCh, &timer_ocinitpara);
 
-    /* CH0 configuration in OC timing mode */
-    timer_channel_output_pulse_value_config(tickerIdToTimerId(tickId), timerCh, value);
-    timer_channel_output_mode_config(tickerIdToTimerId(tickId), timerCh, TIMER_OC_MODE_TIMING);
-    timer_channel_output_shadow_config(tickerIdToTimerId(tickId), timerCh, TIMER_OC_SHADOW_DISABLE);
+        /* CH0 configuration in OC timing mode */
+        timer_channel_output_pulse_value_config(tickerIdToTimerId(tickId), timerCh, value);
+        timer_channel_output_mode_config(tickerIdToTimerId(tickId), timerCh, TIMER_OC_MODE_TIMING);
+        timer_channel_output_shadow_config(tickerIdToTimerId(tickId), timerCh, TIMER_OC_SHADOW_DISABLE);
 
-    timer_interrupt_flag_clear(tickerIdToIRQn(tickId), tickerChToIntCh(timerCh));
+        timer_interrupt_flag_clear(tickerIdToIRQn(tickId), tickerChToIntCh(timerCh));
+    }
 
     ptr->handler = callback;
     ptr->tickId = tickId;
@@ -198,10 +211,27 @@ static void timer_generic_IRQHandler(void) {
     return;
 }
 
+static void timer_generic_up_IRQHandler(void) {
+    ticker_handler_list_t* ptr = ticker_handler_list;
+    while (ptr != 0) {
+        if ((ptr->tickCh == TIMER_UP) && (timer_flag_get(tickerIdToTimerId(ptr->tickId), TIMER_FLAG_UP) != RESET)) {
+            if (ptr->param == 0) {
+                ((voidFuncPtr)ptr->handler)();
+            } else {
+                ((voidFuncPtrParam)ptr->handler)(ptr->param);
+            }
+            timer_flag_clear(tickerIdToTimerId(ptr->tickId), TIMER_FLAG_UP);
+            break;
+        }
+        ptr = ptr->next;
+    }
+    return;
+}
+
 void TIMER_HANDLER_ATTR TIMER0_Channel_IRQHandler(void) { timer_generic_IRQHandler(); }
 void TIMER_HANDLER_ATTR TIMER1_IRQHandler(void) { timer_generic_IRQHandler(); }
 void TIMER_HANDLER_ATTR TIMER2_IRQHandler(void) { timer_generic_IRQHandler(); }
 void TIMER_HANDLER_ATTR TIMER3_IRQHandler(void) { timer_generic_IRQHandler(); }
 void TIMER_HANDLER_ATTR TIMER4_IRQHandler(void) { timer_generic_IRQHandler(); }
-void TIMER_HANDLER_ATTR TIMER5_IRQHandler(void) { timer_generic_IRQHandler(); }
-void TIMER_HANDLER_ATTR TIMER6_IRQHandler(void) { timer_generic_IRQHandler(); }
+void TIMER_HANDLER_ATTR TIMER5_IRQHandler(void) { timer_generic_up_IRQHandler(); }
+void TIMER_HANDLER_ATTR TIMER6_IRQHandler(void) { timer_generic_up_IRQHandler(); }
