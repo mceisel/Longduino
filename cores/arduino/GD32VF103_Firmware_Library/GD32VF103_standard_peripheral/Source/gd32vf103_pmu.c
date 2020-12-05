@@ -98,7 +98,7 @@ void pmu_lvd_disable(void)
 */
 void pmu_to_sleepmode(uint8_t sleepmodecmd)
 {
-    /* clear sleepdeep bit of Cortex-M3 system control register */
+    /* clear sleepdeep bit of RISC-V system control register */
 	clear_csr(0x811, 0x1);
 
     /* select WFI or WFE command to enter sleep mode */

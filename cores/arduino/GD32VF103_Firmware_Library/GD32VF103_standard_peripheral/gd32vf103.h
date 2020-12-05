@@ -63,7 +63,7 @@ OF SUCH DAMAGE.
    #define HXTAL_VALUE    ((uint32_t)8000000) /*!< value of the external oscillator in Hz */
    #define HXTAL_VALUE_25M  HXTAL_VALUE
    #else
-   #error "Please select the target board type used in your application (in gd32vf10x.h file)"
+   #error "Please select the target board type used in your application (in gd32vf103.h file)"
    #endif
  #endif /* high speed crystal oscillator value */
 

@@ -217,7 +217,6 @@ OF SUCH DAMAGE.
 #define AFIO_EC_EOE                BIT(7)                    /*!< event output enable */
 
 /* AFIO_PCF0 */
-/* memory map and bit definitions for GD32F10X_CL devices */
 #define AFIO_PCF0_SPI0_REMAP             BIT(0)              /*!< SPI0 remapping */
 #define AFIO_PCF0_I2C0_REMAP             BIT(1)              /*!< I2C0 remapping */
 #define AFIO_PCF0_USART0_REMAP           BIT(2)              /*!< USART0 remapping */
