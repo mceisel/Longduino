@@ -184,6 +184,12 @@ const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM] = {
 
 };
 
+const spi_map_t SPI_MAP[VARIANT_SPI_NUM] = {
+    {&spi0, PA4, PA5, PA6, PA7},
+    {&spi2, PA15, PB3, PB4, PB5},
+    {&spi1, PB12, PB13, PB14, PB15},
+};
+
 const timer_dev_t * TIMER_MAP[VARIANT_TIMER_NUM] = {
   TIMER_0,
   TIMER_1,
