@@ -25,6 +25,7 @@
 extern "C" {
 #endif
 
+/* GD32VF103CBT6 package LQFP48 (PC0-PC12 n/a, PD0/PD1 not used here) */
 #define VARIANT_GPIO_NUM (48)
 #define VARIANT_TIMER_NUM (5)
 
