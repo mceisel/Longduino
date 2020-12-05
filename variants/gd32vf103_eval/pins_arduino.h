@@ -19,6 +19,7 @@ extern "C" {
 
 /* GD32VF103VBT6 package LQFP100 (all pins available) */
 #define VARIANT_GPIO_NUM (80)
+#define VARIANT_TIMER_NUM (5)
 #define NO_TIMER_PIN_MAP
 #define NO_ADC_PIN_MAP
 
@@ -56,6 +57,7 @@ typedef struct _gd32v_pin_info_t
 } gd32v_pin_info_t;
 
 extern const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM];
+extern const timer_dev_t * TIMER_MAP[VARIANT_TIMER_NUM];
 
 #define digitalPinToPort(p) ((PIN_MAP[p].gpio_device)->gpio_port)
 #define digitalPinToBitMask(p) (BIT(PIN_MAP[p].gpio_bit))
