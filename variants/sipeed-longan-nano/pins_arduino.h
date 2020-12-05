@@ -28,7 +28,7 @@ extern "C" {
 /* GD32VF103CBT6 package LQFP48 (PC0-PC12 n/a, PD0/PD1 not used here) */
 #define VARIANT_GPIO_NUM (48)
 #define VARIANT_SPI_NUM (3)
-#define VARIANT_TIMER_NUM (5)
+#define VARIANT_TIMER_NUM (7)
 
 /* Pin aliases: these give the GPIO port/bit for each pin as an
  * enum. These are optional, but recommended. They make it easier to

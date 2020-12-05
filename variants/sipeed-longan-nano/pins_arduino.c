@@ -76,6 +76,18 @@ timer_dev_t timer4 = {
 };
 timer_dev_t * const TIMER_4 = &timer4;
 
+timer_dev_t timer5 = {
+    .timer_dev = TIMER5,
+    .clk_id = RCU_TIMER5,
+};
+timer_dev_t * const TIMER_5 = &timer5;
+
+timer_dev_t timer6 = {
+    .timer_dev = TIMER6,
+    .clk_id = RCU_TIMER6,
+};
+timer_dev_t * const TIMER_6 = &timer6;
+
 spi_dev_t spi0 = {
     .spi_dev = SPI0,
     .clk_id = RCU_SPI0,
@@ -205,4 +217,6 @@ const timer_dev_t * TIMER_MAP[VARIANT_TIMER_NUM] = {
   TIMER_2,
   TIMER_3,
   TIMER_4,
+  TIMER_5,
+  TIMER_6,
 };
