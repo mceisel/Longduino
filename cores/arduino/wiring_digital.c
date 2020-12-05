@@ -87,6 +87,21 @@ void digitalToggle(pin_size_t pinNumber)
     return gpio_bit_write(digitalPinToPort(pinNumber), digitalPinToBitMask(pinNumber), !gpio_output_bit_get(digitalPinToPort(pinNumber), digitalPinToBitMask(pinNumber)));
 }
 
+spi_dev_t * digitalPinToSPIInfo(pin_size_t pinNumber)
+{
+    for (int i = 0; i < sizeof(SPI_MAP); i++) {
+        if (SPI_MAP[i].nss_pin == pinNumber)
+            return SPI_MAP[i].spi_device;
+	if (SPI_MAP[i].sck_pin == pinNumber)
+            return SPI_MAP[i].spi_device;
+	if (SPI_MAP[i].miso_pin == pinNumber)
+            return SPI_MAP[i].spi_device;
+	if (SPI_MAP[i].mosi_pin == pinNumber)
+            return SPI_MAP[i].spi_device;
+    }
+    return NULL;
+}
+
 
 #ifdef __cplusplus
 }
