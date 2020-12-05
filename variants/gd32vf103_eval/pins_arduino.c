@@ -70,6 +70,24 @@ timer_dev_t timer4 = {
 };
 timer_dev_t * const TIMER_4 = &timer4;
 
+spi_dev_t spi0 = {
+    .spi_dev = SPI0,
+    .clk_id = RCU_SPI0,
+};
+spi_dev_t * const SPI_0 = &spi0;
+
+spi_dev_t spi1 = {
+    .spi_dev = SPI1,
+    .clk_id = RCU_SPI1,
+};
+spi_dev_t * const SPI_1 = &spi1;
+
+spi_dev_t spi2 = {
+    .spi_dev = SPI2,
+    .clk_id = RCU_SPI2,
+};
+spi_dev_t * const SPI_2 = &spi2;
+
 const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM] = {
 /*
     gpio_dev *gpio_device;      GPIO device 
