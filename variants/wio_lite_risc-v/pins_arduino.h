@@ -20,6 +20,7 @@ extern "C" {
 
 /* GD32VF103CBT6 package LQFP48 (PC0-PC12 n/a, PD0/PD1 not used here) */
 #define VARIANT_GPIO_NUM (48)
+#define VARIANT_SPI_NUM (3)
 #define VARIANT_TIMER_NUM (5)
 
 /* Pin aliases: these give the GPIO port/bit for each pin as an
@@ -61,6 +62,15 @@ typedef struct _spi_dev_t {
     rcu_periph_enum clk_id;
 }spi_dev_t;
 
+typedef struct _spi_map_t
+{
+    spi_dev_t * spi_device;
+    uint8_t nss_pin;
+    uint8_t sck_pin;
+    uint8_t miso_pin;
+    uint8_t mosi_pin;
+} spi_map_t;
+
 typedef struct _gd32v_pin_info_t
 {
     gpio_dev_t * gpio_device;
@@ -73,15 +83,17 @@ typedef struct _gd32v_pin_info_t
 } gd32v_pin_info_t;
 
 extern const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM];
+extern const spi_map_t SPI_MAP[VARIANT_SPI_NUM];
 extern const timer_dev_t * TIMER_MAP[VARIANT_TIMER_NUM];
 
 #define digitalPinToPort(p) ((PIN_MAP[p].gpio_device)->gpio_port)
 #define digitalPinToBitMask(p) (BIT(PIN_MAP[p].gpio_bit))
 #define digitalPinToClkid(p) (PIN_MAP[p].gpio_device->clk_id)
 
-#define digitalPinSPIAvailiable(p) (PIN_MAP[p].spi_device != 0)
-#define digitalPinToSPIDevice(p) (PIN_MAP[p].spi_device->spi_dev)
-#define digitalPinToSPIClockId(p) (PIN_MAP[p].spi_device->clk_id)
+spi_dev_t * digitalPinToSPIInfo(uint8_t pinNumber);
+#define digitalPinSPIAvailiable(p) (digitalPinToSPIInfo(p) != 0)
+#define digitalPinToSPIDevice(p) (digitalPinToSPIInfo(p)->spi_dev)
+#define digitalPinToSPIClockId(p) (digitalPinToSPIInfo(p)->clk_id)
 
 
 #define VARIANT_GPIO_OSPEED GPIO_OSPEED_50MHZ //
