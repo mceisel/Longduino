@@ -44,6 +44,12 @@ adc_dev_t adc0 = {
 };
 adc_dev_t * const ADC_0 = &adc0;
 
+adc_dev_t adc1 = {
+    .adc_dev = ADC1,
+    .clk_id = RCU_ADC1,
+};
+adc_dev_t * const ADC_1 = &adc1;
+
 // TODO: add timer remap descriptor
 
 timer_dev_t timer0 = {
@@ -129,10 +135,10 @@ const gd32v_pin_info_t PIN_MAP[VARIANT_AF_NUM] = {
     {&timer1, &adc0, 1, 1}, /* PA1 */
     {&timer1, &adc0, 2, 2}, /* PA2 */
     {&timer1, &adc0, 3, 3}, /* PA3 */
-    {0, &adc0, 0, 4}, /* PA4 */
-    {0, &adc0, 0, 5}, /* PA5 */
-    {&timer2, &adc0, 0, 6}, /* PA6 */
-    {&timer2, &adc0, 1, 7}, /* PA7 */
+    {0, &adc1, 0, 4}, /* PA4 */
+    {0, &adc1, 0, 5}, /* PA5 */
+    {&timer2, &adc1, 0, 6}, /* PA6 */
+    {&timer2, &adc1, 1, 7}, /* PA7 */
     {&timer0, 0, 0, 0}, /* PA8 */
     {&timer0, 0, 1, 0}, /* PA9 */
     {&timer0, 0, 2, 0}, /* PA10 */
@@ -161,10 +167,10 @@ const gd32v_pin_info_t PIN_MAP[VARIANT_AF_NUM] = {
 
     {0, &adc0, 0, 10}, /* PC0 */
     {0, &adc0, 0, 11}, /* PC1 */
-    {0, &adc0, 0, 12}, /* PC2 */
-    {0, &adc0, 0, 13}, /* PC3 */
-    {0, &adc0, 0, 14}, /* PC4 */
-    {0, &adc0, 0, 15}, /* PC5 */
+    {0, &adc1, 0, 12}, /* PC2 */
+    {0, &adc1, 0, 13}, /* PC3 */
+    {0, &adc1, 0, 14}, /* PC4 */
+    {0, &adc1, 0, 15}, /* PC5 */
     {0, 0, 0, 0}, /* PC6 */
     {0, 0, 0, 0}, /* PC7 */
 };
