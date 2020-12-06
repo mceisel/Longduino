@@ -120,6 +120,8 @@ void noTone(pin_size_t pinNumber)
         return;
     }
 #ifndef NO_TIMER_PIN_MAP
-    timer_deinit(PIN_MAP[pinNumber].timer_device->timer_dev);
+    if (analogWritable(pinNumber)) {
+        timer_deinit(PIN_MAP[pinNumber].timer_device->timer_dev);
+    }
 #endif
 }
