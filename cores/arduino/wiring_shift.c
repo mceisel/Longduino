@@ -4,10 +4,10 @@
 
 void shiftOut(
     pin_size_t dataPin, pin_size_t clockPin, BitOrder bitOrder, uint8_t val) {
-    if (dataPin > VARIANT_GPIO_NUM) {
+    if (dataPin >= VARIANT_GPIO_NUM) {
         return;
     }
-    if (clockPin > VARIANT_GPIO_NUM) {
+    if (clockPin >= VARIANT_GPIO_NUM) {
         return;
     }
     gpio_bit_reset(digitalPinToPort(clockPin), digitalPinToBitMask(clockPin));
@@ -30,10 +30,10 @@ void shiftOut(
 
 pin_size_t shiftIn(pin_size_t dataPin, pin_size_t clockPin, BitOrder bitOrder) {
     pin_size_t ret = 0;
-    if (dataPin > VARIANT_GPIO_NUM) {
+    if (dataPin >= VARIANT_GPIO_NUM) {
         return 0;
     }
-    if (clockPin > VARIANT_GPIO_NUM) {
+    if (clockPin >= VARIANT_GPIO_NUM) {
         return 0;
     }
     gpio_bit_reset(digitalPinToPort(clockPin), digitalPinToBitMask(clockPin));
