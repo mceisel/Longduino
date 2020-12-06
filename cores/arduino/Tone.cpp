@@ -30,7 +30,7 @@ static void toneBegin(pin_size_t pinNumber)
 
 void tone(pin_size_t pinNumber, unsigned int frequency, unsigned long duration)
 {
-    if (pinNumber > VARIANT_GPIO_NUM || frequency <= 0 || frequency > 1000000) {
+    if (pinNumber >= VARIANT_GPIO_NUM || frequency <= 0 || frequency > 1000000) {
         return;
     }
 #ifdef NO_TIMER_PIN_MAP
@@ -116,7 +116,7 @@ void tone(pin_size_t pinNumber, unsigned int frequency, unsigned long duration)
 
 void noTone(pin_size_t pinNumber) 
 {
-    if (pinNumber > VARIANT_GPIO_NUM) {
+    if (pinNumber >= VARIANT_GPIO_NUM) {
         return;
     }
 #ifndef NO_TIMER_PIN_MAP
