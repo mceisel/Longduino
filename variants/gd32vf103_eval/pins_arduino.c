@@ -115,91 +115,94 @@ const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM] = {
     uint8 timer_channel;        Timer channel, or 0 if none. 
     uint8 adc_channel;          Pin ADC channel, or ADCx if none. 
 */
-    {&gpioa, /*&timer2 , &adc1,*/ 0 /*, 1, 0*/}, /* PA0 */
-    {&gpioa, /*&timer2 , &adc1,*/ 1 /*, 1, 0*/}, /* PA1 */
-    {&gpioa, /*&timer2 , &adc1,*/ 2 /*, 1, 0*/}, /* PA2 */
-    {&gpioa, /*&timer2 , &adc1,*/ 3 /*, 1, 0*/}, /* PA3 */
-    {&gpioa, /*&timer2 , &adc1,*/ 4 /*, 1, 0*/}, /* PA4 */
-    {&gpioa, /*&timer2 , &adc1,*/ 5 /*, 1, 0*/}, /* PA5 */
-    {&gpioa, /*&timer2 , &adc1,*/ 6 /*, 1, 0*/}, /* PA6 */
-    {&gpioa, /*&timer2 , &adc1,*/ 7 /*, 1, 0*/}, /* PA7 */
-    {&gpioa, /*&timer2 , &adc1,*/ 8 /*, 1, 0*/}, /* PA8 */
-    {&gpioa, /*&timer2 , &adc1,*/ 9 /*, 1, 0*/}, /* PA9 */
-    {&gpioa, /*&timer2 , &adc1,*/ 10 /*, 1, 0*/}, /* PA10 */
-    {&gpioa, /*&timer2 , &adc1,*/ 11 /*, 1, 0*/}, /* PA11 */
-    {&gpioa, /*&timer2 , &adc1,*/ 12 /*, 1, 0*/}, /* PA12 */
-    {&gpioa, /*&timer2 , &adc1,*/ 13 /*, 1, 0*/}, /* PA13 */
-    {&gpioa, /*&timer2 , &adc1,*/ 14 /*, 1, 0*/}, /* PA14 */
-    {&gpioa, /*&timer2 , &adc1,*/ 15 /*, 1, 0*/}, /* PA15 */
+    {&gpioa, &timer1, &adc0, 0, 0, 0}, /* PA0 */
+    {&gpioa, &timer1, &adc0, 1, 1, 1}, /* PA1 */
+    {&gpioa, &timer1, &adc0, 2, 2, 2}, /* PA2 */
+    {&gpioa, &timer1, &adc0, 3, 3, 3}, /* PA3 */
+    {&gpioa, 0, &adc0, 4, 0, 4}, /* PA4 */
+    {&gpioa, 0, &adc0, 5, 0, 5}, /* PA5 */
+    {&gpioa, &timer2, &adc0, 6, 0, 6}, /* PA6 */
+    {&gpioa, &timer2, &adc0, 7, 1, 7}, /* PA7 */
+    {&gpioa, &timer0, 0, 8, 0, 0}, /* PA8 */
+    {&gpioa, &timer0, 0, 9, 1, 0}, /* PA9 */
+    {&gpioa, &timer0, 0, 10, 2, 0}, /* PA10 */
+    {&gpioa, &timer0, 0, 11, 3, 0}, /* PA11 */
+    {&gpioa, 0, 0, 12, 0, 0}, /* PA12 */
+    {&gpioa, 0, 0, 13, 0, 0}, /* PA13 */
+    {&gpioa, 0, 0, 14, 0, 0}, /* PA14 */
+    {&gpioa, 0, 0, 15, 0, 0}, /* PA15 */
 
-    {&gpiob, /*&timer2 , &adc1,*/ 0 /*, 1, 0*/}, /* PB0 */
-    {&gpiob, /*&timer2 , &adc1,*/ 1 /*, 1, 0*/}, /* PB1 */
-    {&gpiob, /*&timer2 , &adc1,*/ 2 /*, 1, 0*/}, /* PB2 */
-    {&gpiob, /*&timer2 , &adc1,*/ 3 /*, 1, 0*/}, /* PB3 */
-    {&gpiob, /*&timer2 , &adc1,*/ 4 /*, 1, 0*/}, /* PB4 */
-    {&gpiob, /*&timer2 , &adc1,*/ 5 /*, 1, 0*/}, /* PB5 */
-    {&gpiob, /*&timer2 , &adc1,*/ 6 /*, 1, 0*/}, /* PB6 */
-    {&gpiob, /*&timer2 , &adc1,*/ 7 /*, 1, 0*/}, /* PB7 */
-    {&gpiob, /*&timer2 , &adc1,*/ 8 /*, 1, 0*/}, /* PB8 */
-    {&gpiob, /*&timer2 , &adc1,*/ 9 /*, 1, 0*/}, /* PB9 */
-    {&gpiob, /*&timer2 , &adc1,*/ 10 /*, 1, 0*/}, /* PB10 */
-    {&gpiob, /*&timer2 , &adc1,*/ 11 /*, 1, 0*/}, /* PB11 */
-    {&gpiob, /*&timer2 , &adc1,*/ 12 /*, 1, 0*/}, /* PB12 */
-    {&gpiob, /*&timer2 , &adc1,*/ 13 /*, 1, 0*/}, /* PB13 */
-    {&gpiob, /*&timer2 , &adc1,*/ 14 /*, 1, 0*/}, /* PB14 */
-    {&gpiob, /*&timer2 , &adc1,*/ 15 /*, 1, 0*/}, /* PB15 */
+    {&gpiob, &timer2, &adc0, 0, 2, 8}, /* PB0 */
+    {&gpiob, &timer2, &adc0, 1, 3, 9}, /* PB1 */
+    {&gpiob, 0, 0, 2, 0, 0}, /* PB2 */
+    {&gpiob, 0, 0, 3, 0, 0}, /* PB3 */
+    {&gpiob, 0, 0, 4, 0, 0}, /* PB4 */
+    {&gpiob, 0, 0, 5, 0, 0}, /* PB5 */
+    {&gpiob, &timer3, 0, 6, 0, 0}, /* PB6 */
+    {&gpiob, &timer3, 0, 7, 1, 0}, /* PB7 */
+    {&gpiob, &timer3, 0, 8, 2, 0}, /* PB8 */
+    {&gpiob, &timer3, 0, 9, 3, 0}, /* PB9 */
+    {&gpiob, 0, 0, 10, 0, 0}, /* PB10 */
+    {&gpiob, 0, 0, 11, 0, 0}, /* PB11 */
+    {&gpiob, 0, 0, 12, 0, 0}, /* PB12 */
+    {&gpiob, 0, 0, 13, 0, 0}, /* PB13 */
+    {&gpiob, 0, 0, 14, 0, 0}, /* PB14 */
+    {&gpiob, 0, 0, 15, 0, 0}, /* PB15 */
 
-    {&gpioc, /*&timer2 , &adc1,*/ 0 /*, 1, 0*/}, /* PC0 */
-    {&gpioc, /*&timer2 , &adc1,*/ 1 /*, 1, 0*/}, /* PC1 */
-    {&gpioc, /*&timer2 , &adc1,*/ 2 /*, 1, 0*/}, /* PC2 */
-    {&gpioc, /*&timer2 , &adc1,*/ 3 /*, 1, 0*/}, /* PC3 */
-    {&gpioc, /*&timer2 , &adc1,*/ 4 /*, 1, 0*/}, /* PC4 */
-    {&gpioc, /*&timer2 , &adc1,*/ 5 /*, 1, 0*/}, /* PC5 */
-    {&gpioc, /*&timer2 , &adc1,*/ 6 /*, 1, 0*/}, /* PC6 */
-    {&gpioc, /*&timer2 , &adc1,*/ 7 /*, 1, 0*/}, /* PC7 */
-    {&gpioc, /*&timer2 , &adc1,*/ 8 /*, 1, 0*/}, /* PC8 */
-    {&gpioc, /*&timer2 , &adc1,*/ 9 /*, 1, 0*/}, /* PC9 */
-    {&gpioc, /*&timer2 , &adc1,*/ 10 /*, 1, 0*/}, /* PC10 */
-    {&gpioc, /*&timer2 , &adc1,*/ 11 /*, 1, 0*/}, /* PC11 */
-    {&gpioc, /*&timer2 , &adc1,*/ 12 /*, 1, 0*/}, /* PC12 */
-    {&gpioc, /*&timer2 , &adc1,*/ 13 /*, 1, 0*/}, /* PC13 */
-    {&gpioc, /*&timer2 , &adc1,*/ 14 /*, 1, 0*/}, /* PC14 */
-    {&gpioc, /*&timer2 , &adc1,*/ 15 /*, 1, 0*/}, /* PC15 */
+    {&gpioc, 0, &adc0, 0, 0, 10}, /* PC0 */
+    {&gpioc, 0, &adc0, 1, 0, 11}, /* PC1 */
+    {&gpioc, 0, &adc0, 2, 0, 12}, /* PC2 */
+    {&gpioc, 0, &adc0, 3, 0, 13}, /* PC3 */
+    {&gpioc, 0, &adc0, 4, 0, 14}, /* PC4 */
+    {&gpioc, 0, &adc0, 5, 0, 15}, /* PC5 */
+    {&gpioc, 0, 0, 6, 0, 0}, /* PC6 */
+    {&gpioc, 0, 0, 7, 0, 0}, /* PC7 */
+    {&gpioc, 0, 0, 8, 0, 0}, /* PC8 */
+    {&gpioc, 0, 0, 9, 0, 0}, /* PC9 */
+    {&gpioc, 0, 0, 10, 0, 0}, /* PC10 */
+    {&gpioc, 0, 0, 11, 0, 0}, /* PC11 */
+    {&gpioc, 0, 0, 12, 0, 0}, /* PC12 */
+    {&gpioc, 0, 0, 13, 0, 0}, /* PC13 */
+    {&gpioc, 0, 0, 14, 0, 0}, /* PC14 */
+    {&gpioc, 0, 0, 15, 0, 0}, /* PC15 */
 
-    {&gpiod, /*&timer2 , &adc1,*/ 0 /*, 1, 0*/}, /* PD0 */
-    {&gpiod, /*&timer2 , &adc1,*/ 1 /*, 1, 0*/}, /* PD1 */
-    {&gpiod, /*&timer2 , &adc1,*/ 2 /*, 1, 0*/}, /* PD2 */
-    {&gpiod, /*&timer2 , &adc1,*/ 3 /*, 1, 0*/}, /* PD3 */
-    {&gpiod, /*&timer2 , &adc1,*/ 4 /*, 1, 0*/}, /* PD4 */
-    {&gpiod, /*&timer2 , &adc1,*/ 5 /*, 1, 0*/}, /* PD5 */
-    {&gpiod, /*&timer2 , &adc1,*/ 6 /*, 1, 0*/}, /* PD6 */
-    {&gpiod, /*&timer2 , &adc1,*/ 7 /*, 1, 0*/}, /* PD7 */
-    {&gpiod, /*&timer2 , &adc1,*/ 8 /*, 1, 0*/}, /* PD8 */
-    {&gpiod, /*&timer2 , &adc1,*/ 9 /*, 1, 0*/}, /* PD9 */
-    {&gpiod, /*&timer2 , &adc1,*/ 10 /*, 1, 0*/}, /* PD10 */
-    {&gpiod, /*&timer2 , &adc1,*/ 11 /*, 1, 0*/}, /* PD11 */
-    {&gpiod, /*&timer2 , &adc1,*/ 12 /*, 1, 0*/}, /* PD12 */
-    {&gpiod, /*&timer2 , &adc1,*/ 13 /*, 1, 0*/}, /* PD13 */
-    {&gpiod, /*&timer2 , &adc1,*/ 14 /*, 1, 0*/}, /* PD14 */
-    {&gpiod, /*&timer2 , &adc1,*/ 15 /*, 1, 0*/}, /* PD15 */
+#if VARIANT_GPIO_NUM > 48
+    {&gpiod, 0, 0, 0, 0, 0}, /* PD0 */
+    {&gpiod, 0, 0, 1, 0, 0}, /* PD1 */
+    {&gpiod, 0, 0, 2, 0, 0}, /* PD2 */
+    {&gpiod, 0, 0, 3, 0, 0}, /* PD3 */
+    {&gpiod, 0, 0, 4, 0, 0}, /* PD4 */
+    {&gpiod, 0, 0, 5, 0, 0}, /* PD5 */
+    {&gpiod, 0, 0, 6, 0, 0}, /* PD6 */
+    {&gpiod, 0, 0, 7, 0, 0}, /* PD7 */
+    {&gpiod, 0, 0, 8, 0, 0}, /* PD8 */
+    {&gpiod, 0, 0, 9, 0, 0}, /* PD9 */
+    {&gpiod, 0, 0, 10, 0, 0}, /* PD10 */
+    {&gpiod, 0, 0, 11, 0, 0}, /* PD11 */
+    {&gpiod, 0, 0, 12, 0, 0}, /* PD12 */
+    {&gpiod, 0, 0, 13, 0, 0}, /* PD13 */
+    {&gpiod, 0, 0, 14, 0, 0}, /* PD14 */
+    {&gpiod, 0, 0, 15, 0, 0}, /* PD15 */
+#endif
 
-    {&gpioe, /*&timer2 , &adc1,*/ 0 /*, 1, 0*/}, /* PE0 */
-    {&gpioe, /*&timer2 , &adc1,*/ 1 /*, 1, 0*/}, /* PE1 */
-    {&gpioe, /*&timer2 , &adc1,*/ 2 /*, 1, 0*/}, /* PE2 */
-    {&gpioe, /*&timer2 , &adc1,*/ 3 /*, 1, 0*/}, /* PE3 */
-    {&gpioe, /*&timer2 , &adc1,*/ 4 /*, 1, 0*/}, /* PE4 */
-    {&gpioe, /*&timer2 , &adc1,*/ 5 /*, 1, 0*/}, /* PE5 */
-    {&gpioe, /*&timer2 , &adc1,*/ 6 /*, 1, 0*/}, /* PE6 */
-    {&gpioe, /*&timer2 , &adc1,*/ 7 /*, 1, 0*/}, /* PE7 */
-    {&gpioe, /*&timer2 , &adc1,*/ 8 /*, 1, 0*/}, /* PE8 */
-    {&gpioe, /*&timer2 , &adc1,*/ 9 /*, 1, 0*/}, /* PE9 */
-    {&gpioe, /*&timer2 , &adc1,*/ 10 /*, 1, 0*/}, /* PE10 */
-    {&gpioe, /*&timer2 , &adc1,*/ 11 /*, 1, 0*/}, /* PE11 */
-    {&gpioe, /*&timer2 , &adc1,*/ 12 /*, 1, 0*/}, /* PE12 */
-    {&gpioe, /*&timer2 , &adc1,*/ 13 /*, 1, 0*/}, /* PE13 */
-    {&gpioe, /*&timer2 , &adc1,*/ 14 /*, 1, 0*/}, /* PE14 */
-    {&gpioe, /*&timer2 , &adc1,*/ 15 /*, 1, 0*/}, /* PE15 */
-
+#if VARIANT_GPIO_NUM > 64
+    {&gpioe, 0, 0, 0, 0, 0}, /* PE0 */
+    {&gpioe, 0, 0, 1, 0, 0}, /* PE1 */
+    {&gpioe, 0, 0, 2, 0, 0}, /* PE2 */
+    {&gpioe, 0, 0, 3, 0, 0}, /* PE3 */
+    {&gpioe, 0, 0, 4, 0, 0}, /* PE4 */
+    {&gpioe, 0, 0, 5, 0, 0}, /* PE5 */
+    {&gpioe, 0, 0, 6, 0, 0}, /* PE6 */
+    {&gpioe, 0, 0, 7, 0, 0}, /* PE7 */
+    {&gpioe, 0, 0, 8, 0, 0}, /* PE8 */
+    {&gpioe, 0, 0, 9, 0, 0}, /* PE9 */
+    {&gpioe, 0, 0, 10, 0, 0}, /* PE10 */
+    {&gpioe, 0, 0, 11, 0, 0}, /* PE11 */
+    {&gpioe, 0, 0, 12, 0, 0}, /* PE12 */
+    {&gpioe, 0, 0, 13, 0, 0}, /* PE13 */
+    {&gpioe, 0, 0, 14, 0, 0}, /* PE14 */
+    {&gpioe, 0, 0, 15, 0, 0}, /* PE15 */
+#endif
 };
 
 const spi_map_t SPI_MAP[VARIANT_SPI_NUM] = {
