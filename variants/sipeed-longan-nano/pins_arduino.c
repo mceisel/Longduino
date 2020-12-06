@@ -106,6 +106,18 @@ spi_dev_t spi2 = {
 };
 spi_dev_t * const SPI_2 = &spi2;
 
+const gpio_dev_t * PORT_MAP[VARIANT_GPIO_PORT_NUM] = {
+    &gpioa,
+    &gpiob,
+    &gpioc,
+#if VARIANT_GPIO_NUM > 48
+    &gpiod,
+#endif
+#if VARIANT_GPIO_NUM > 64
+    &gpioe,
+#endif
+};
+
 const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM] = {
 /*
     gpio_dev *gpio_device;      GPIO device 
