@@ -35,14 +35,13 @@ void analogReference(AnalogReferenceMode mode) {
 int analogRead(pin_size_t pinNumber) {
     uint32_t adc_dev = ADC0;
     rcu_periph_enum clk_id = RCU_ADC0;
-    if (pinNumber > VARIANT_GPIO_NUM) {
+    if (pinNumber >= VARIANT_GPIO_NUM) {
         return -1;
     }
 #ifdef NO_ADC_PIN_MAP
     testInitAnalogRead(adc_dev, clk_id);
 #else
-    if (PIN_MAP[pinNumber].adc_device != 0
-        && PIN_MAP[pinNumber].gpio_device != 0) {
+    if (PIN_MAP[pinNumber].adc_device != 0) {
         adc_dev = PIN_MAP[pinNumber].adc_device->adc_dev;
         clk_id = PIN_MAP[pinNumber].adc_device->clk_id;
         testInitAnalogRead(adc_dev, clk_id);
@@ -63,7 +62,7 @@ int analogRead(pin_size_t pinNumber) {
 }
 
 void analogWrite(pin_size_t pinNumber, int value) {
-    if (pinNumber > VARIANT_GPIO_NUM || value < 0 || value > 255) {
+    if (pinNumber >= VARIANT_GPIO_NUM || value < 0 || value > 255) {
         return;
     }
 #ifndef NO_TIMER_PIN_MAP
