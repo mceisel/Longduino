@@ -21,6 +21,7 @@ extern "C" {
 /* GD32VF103CBT6 package LQFP48 (PC0-PC12 n/a, PD0/PD1 not used here) */
 #define VARIANT_GPIO_PORT_NUM (3)
 #define VARIANT_GPIO_NUM (48)
+#define VARIANT_AF_NUM (40)
 #define VARIANT_SPI_NUM (3)
 #define VARIANT_TIMER_NUM (7)
 
@@ -74,16 +75,14 @@ typedef struct _spi_map_t
 
 typedef struct _gd32v_pin_info_t
 {
-    gpio_dev_t * gpio_device;
     timer_dev_t * timer_device;
     adc_dev_t * adc_device;
-    uint8_t gpio_bit;
     uint8_t timer_channel;
     uint8_t adc_channel;
 } gd32v_pin_info_t;
 
 extern const gpio_dev_t * PORT_MAP[VARIANT_GPIO_PORT_NUM];
-extern const gd32v_pin_info_t PIN_MAP[VARIANT_GPIO_NUM];
+extern const gd32v_pin_info_t PIN_MAP[VARIANT_AF_NUM];
 extern const spi_map_t SPI_MAP[VARIANT_SPI_NUM];
 extern const timer_dev_t * TIMER_MAP[VARIANT_TIMER_NUM];
 
