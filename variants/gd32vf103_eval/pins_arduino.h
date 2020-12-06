@@ -42,6 +42,13 @@ typedef struct _gpio_dev_t
 
 }gpio_dev_t;
 
+typedef struct _adc_dev_t
+{
+    uint32_t adc_dev;
+    rcu_periph_enum clk_id;
+
+}adc_dev_t;
+
 typedef struct _timer_dev_t {
     uint32_t timer_dev;
     rcu_periph_enum clk_id;

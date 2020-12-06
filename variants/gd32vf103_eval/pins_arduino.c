@@ -38,6 +38,12 @@ gpio_dev_t gpioe = {
 };
 gpio_dev_t * const GPIO_E = &gpioe;
 
+adc_dev_t adc0 = {
+    .adc_dev = ADC0,
+    .clk_id = RCU_ADC0,
+};
+adc_dev_t * const ADC_0 = &adc0;
+
 // TODO: add timer remap descriptor
 
 timer_dev_t timer0 = {
