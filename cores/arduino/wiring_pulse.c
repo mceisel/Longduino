@@ -19,7 +19,7 @@ static inline uint64_t get_mcycle(void) {
 }
 
 unsigned long pulseIn(pin_size_t pin, uint8_t state, unsigned long timeout) {
-    if (pin > VARIANT_GPIO_NUM) {
+    if (pin >= VARIANT_GPIO_NUM) {
         return 0;
     }
     uint64_t timeoutInCycles = timeout * _ClockCyclesPerMicrosecond();
