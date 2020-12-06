@@ -62,8 +62,8 @@ void tone(pin_size_t pinNumber, unsigned int frequency, unsigned long duration)
       clockdiv = TIMER_CKDIV_DIV4;
     }
 
-    rcu_periph_clock_enable(PIN_MAP[pinNumber].timer_device->clk_id);
-    timer_deinit(PIN_MAP[pinNumber].timer_device->timer_dev);
+    rcu_periph_clock_enable(digitalPinToTimerClockId(pinNumber));
+    timer_deinit(digitalPinToTimerDevice(pinNumber));
 
     /* initialize TIMER init parameter struct */
     timer_struct_para_init(&timer_initpara);
@@ -74,7 +74,7 @@ void tone(pin_size_t pinNumber, unsigned int frequency, unsigned long duration)
     timer_initpara.period = period;
     timer_initpara.clockdivision = clockdiv;
     timer_initpara.repetitioncounter = 0;
-    timer_init(PIN_MAP[pinNumber].timer_device->timer_dev, &timer_initpara);
+    timer_init(digitalPinToTimerDevice(pinNumber), &timer_initpara);
 
     /* initialize TIMER channel output parameter struct */
     timer_channel_output_struct_para_init(&timer_ocinitpara);
@@ -85,31 +85,31 @@ void tone(pin_size_t pinNumber, unsigned int frequency, unsigned long duration)
     timer_ocinitpara.ocnpolarity  = TIMER_OCN_POLARITY_HIGH;
     timer_ocinitpara.ocidlestate  = TIMER_OC_IDLE_STATE_LOW;
     timer_ocinitpara.ocnidlestate = TIMER_OCN_IDLE_STATE_LOW;
-    timer_channel_output_config(PIN_MAP[pinNumber].timer_device->timer_dev,
+    timer_channel_output_config(digitalPinToTimerDevice(pinNumber),
         PIN_MAP[pinNumber].timer_channel, &timer_ocinitpara);
 
     /* channel configuration in PWM mode, duty cycle 50% */
     timer_channel_output_pulse_value_config(
-        PIN_MAP[pinNumber].timer_device->timer_dev,
+        digitalPinToTimerDevice(pinNumber),
         PIN_MAP[pinNumber].timer_channel, value);
-    timer_channel_output_mode_config(PIN_MAP[pinNumber].timer_device->timer_dev,
+    timer_channel_output_mode_config(digitalPinToTimerDevice(pinNumber),
         PIN_MAP[pinNumber].timer_channel, TIMER_OC_MODE_PWM0);
     timer_channel_output_shadow_config(
-        PIN_MAP[pinNumber].timer_device->timer_dev,
+        digitalPinToTimerDevice(pinNumber),
         PIN_MAP[pinNumber].timer_channel, TIMER_OC_SHADOW_DISABLE);
 
     /* auto-reload preload enable */
-    timer_auto_reload_shadow_enable(PIN_MAP[pinNumber].timer_device->timer_dev);
-    if (PIN_MAP[pinNumber].timer_device->timer_dev == TIMER0) {
+    timer_auto_reload_shadow_enable(digitalPinToTimerDevice(pinNumber));
+    if (digitalPinToTimerDevice(pinNumber) == TIMER0) {
         /* TIMER0 output enable */
-        timer_primary_output_config(PIN_MAP[pinNumber].timer_device->timer_dev, ENABLE);
+        timer_primary_output_config(digitalPinToTimerDevice(pinNumber), ENABLE);
     }
     _start_time = millis();
     /* TIMER counter enable */
-    timer_enable(PIN_MAP[pinNumber].timer_device->timer_dev);
+    timer_enable(digitalPinToTimerDevice(pinNumber));
     if (duration > 0) {
         while ( millis() - _start_time < duration );
-        timer_deinit(PIN_MAP[pinNumber].timer_device->timer_dev);
+        timer_deinit(digitalPinToTimerDevice(pinNumber));
     }
 #endif
 }
@@ -121,7 +121,7 @@ void noTone(pin_size_t pinNumber)
     }
 #ifndef NO_TIMER_PIN_MAP
     if (analogWritable(pinNumber)) {
-        timer_deinit(PIN_MAP[pinNumber].timer_device->timer_dev);
+        timer_deinit(digitalPinToTimerDevice(pinNumber));
     }
 #endif
 }

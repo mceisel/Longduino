@@ -121,11 +121,21 @@ void digitalWrite(pin_size_t pinNumber, PinStatus status);
 PinStatus digitalRead(pin_size_t pinNumber);
 void digitalToggle(pin_size_t pinNumber);
 
+#define digitalPinToADCInfo(p) PIN_MAP[p].adc_device
+#define digitalPinADCAvailable(p) (digitalPinToADCInfo(p) != 0)
+#define digitalPinToADCClockId(p) digitalPinToADCInfo(p)->clk_id
+#define digitalPinToADCDevice(p) digitalPinToADCInfo(p)->adc_dev
+
+#define digitalPinToTimerInfo(p) PIN_MAP[p].timer_device
+#define digitalPinTimerAvailable(p) (digitalPinToTimerInfo(p) != 0)
+#define digitalPinToTimerClockId(p) digitalPinToTimerInfo(p)->clk_id
+#define digitalPinToTimerDevice(p) digitalPinToTimerInfo(p)->timer_dev
+
 int analogRead(pin_size_t pinNumber);
 void analogReference(AnalogReferenceMode mode);
 void analogWrite(pin_size_t pinNumber, int value);
 
-#define analogWritable(p) ((p < VARIANT_AF_NUM) && PIN_MAP[p].timer_device && (p != PA9))
+#define analogWritable(p) ((p < VARIANT_AF_NUM) && digitalPinTimerAvailable(p) && (p != PA9))
 
 uint64_t millis(void);
 uint64_t micros(void);
