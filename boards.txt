@@ -193,3 +193,70 @@ wio_lite-risc-v.menu.USBMode.Host.build.usb_mode=HOST
 wio_lite-risc-v.menu.USBMode.OTG=OTG
 wio_lite-risc-v.menu.USBMode.OTG.build.usb_mode=OTG
 
+###################################################
+############# Seeed GD32 RISC-V Dev Board ###############
+
+gd32-risc-v-dev.name=GD32 RISC-V Dev Board
+
+## VID PID
+gd32-risc-v-dev.build.vid=28e9
+gd32-risc-v-dev.build.pid=0189
+
+## Toolchain
+gd32-risc-v-dev.menu.toolsloc.default=Default
+gd32-risc-v-dev.menu.toolsloc.default.compiler.path={runtime.tools.riscv-nuclei-elf-gcc.path}/bin/
+
+## CPU Clock
+gd32-risc-v-dev.menu.clksrc.108=108MHz CPU Clock Frequency
+gd32-risc-v-dev.menu.clksrc.96=96MHz CPU Clock Frequency
+gd32-risc-v-dev.menu.clksrc.108.build.f_cpu=108000000L
+gd32-risc-v-dev.menu.clksrc.96.build.f_cpu=96000000L
+
+## Burn baud rate
+gd32-risc-v-dev.menu.burn_baudrate.115200=115200 bps
+gd32-risc-v-dev.menu.burn_baudrate.115200.build.burn_baudrate=115200
+
+## HXTAL freq value
+gd32-risc-v-dev.build.hxtal_value=8000000UL
+
+## Point to the file for ./variants/<variant>/pins_arduino.h
+gd32-risc-v-dev.build.variant=gd32_risc-v_dev
+
+## "The 'core' file directory for this board, in ./cores
+gd32-risc-v-dev.build.core=arduino
+
+## This sets a define for use in the compiled code.
+gd32-risc-v-dev.build.board=BOARD_GD32_RISCV_DEV
+gd32-risc-v-dev.build.sdata.size=512
+
+## This selects the tool from "programmers.txt"
+gd32-risc-v-dev.program.tool=serial
+gd32-risc-v-dev.upload.tool=serial
+
+## Limit is the 128KiB Flash. Assume it is partially used for something else.
+gd32-risc-v-dev.upload.maximum_size=81920
+gd32-risc-v-dev.build.ldscript={runtime.platform.path}/cores/arduino/GD32VF103_Firmware_Library/RISCV/env_Eclipse/GD32VF103xB.lds
+
+gd32-risc-v-dev.build.partitions=default
+gd32-risc-v-dev.build.usb_mode=DEVICE
+
+gd32-risc-v-dev.menu.PartitionScheme.default=Default (64KB APP/64KB Other)
+gd32-risc-v-dev.menu.PartitionScheme.default.build.partitions=default
+gd32-risc-v-dev.menu.PartitionScheme.default.upload.maximum_size=65536
+gd32-risc-v-dev.menu.PartitionScheme.medium=Medium (80KB APP/48KB Other)
+gd32-risc-v-dev.menu.PartitionScheme.medium.build.partitions=medium
+gd32-risc-v-dev.menu.PartitionScheme.medium.upload.maximum_size=81920
+gd32-risc-v-dev.menu.PartitionScheme.high=High (96KB APP/32KB Other)
+gd32-risc-v-dev.menu.PartitionScheme.high.build.partitions=high
+gd32-risc-v-dev.menu.PartitionScheme.high.upload.maximum_size=98304
+gd32-risc-v-dev.menu.PartitionScheme.full=Full (128KB APP only)
+gd32-risc-v-dev.menu.PartitionScheme.full.build.partitions=full
+gd32-risc-v-dev.menu.PartitionScheme.full.upload.maximum_size=131072
+
+gd32-risc-v-dev.menu.USBMode.Device=Device
+gd32-risc-v-dev.menu.USBMode.Device.build.usb_mode=DEVICE
+gd32-risc-v-dev.menu.USBMode.Host=Host
+gd32-risc-v-dev.menu.USBMode.Host.build.usb_mode=HOST
+gd32-risc-v-dev.menu.USBMode.OTG=OTG
+gd32-risc-v-dev.menu.USBMode.OTG.build.usb_mode=OTG
+
