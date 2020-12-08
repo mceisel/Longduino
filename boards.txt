@@ -60,6 +60,9 @@ nano.menu.PartitionScheme.medium.upload.maximum_size=81920
 nano.menu.PartitionScheme.high=High (96KB APP/32KB Other)
 nano.menu.PartitionScheme.high.build.partitions=high
 nano.menu.PartitionScheme.high.upload.maximum_size=98304
+nano.menu.PartitionScheme.full=Full (128KB APP only)
+nano.menu.PartitionScheme.full.build.partitions=full
+nano.menu.PartitionScheme.full.upload.maximum_size=131072
 
 nano.menu.USBMode.Device=Device
 nano.menu.USBMode.Device.build.usb_mode=DEVICE
@@ -121,6 +124,9 @@ eval.menu.PartitionScheme.medium.upload.maximum_size=81920
 eval.menu.PartitionScheme.high=High (96KB APP/32KB Other)
 eval.menu.PartitionScheme.high.build.partitions=high
 eval.menu.PartitionScheme.high.upload.maximum_size=98304
+eval.menu.PartitionScheme.full=Full (128KB APP only)
+eval.menu.PartitionScheme.full.build.partitions=full
+eval.menu.PartitionScheme.full.upload.maximum_size=131072
 
 eval.menu.USBMode.Device=Device
 eval.menu.USBMode.Device.build.usb_mode=DEVICE
@@ -185,6 +191,9 @@ wio_lite-risc-v.menu.PartitionScheme.medium.upload.maximum_size=81920
 wio_lite-risc-v.menu.PartitionScheme.high=High (96KB APP/32KB Other)
 wio_lite-risc-v.menu.PartitionScheme.high.build.partitions=high
 wio_lite-risc-v.menu.PartitionScheme.high.upload.maximum_size=98304
+wio_lite-risc-v.menu.PartitionScheme.full=Full (128KB APP only)
+wio_lite-risc-v.menu.PartitionScheme.full.build.partitions=full
+wio_lite-risc-v.menu.PartitionScheme.full.upload.maximum_size=131072
 
 wio_lite-risc-v.menu.USBMode.Device=Device
 wio_lite-risc-v.menu.USBMode.Device.build.usb_mode=DEVICE
