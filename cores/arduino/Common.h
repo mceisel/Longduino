@@ -9,6 +9,18 @@ extern "C"{
 
 #include "pins_arduino.h"
 
+/* analog pins */
+#ifndef A0
+#define A0 PA0
+#define A1 PA1
+#define A2 PA2
+#define A3 PA3
+#define A4 PA4
+#define A5 PA5
+#define A6 PA6
+#define A7 PA7
+#endif
+
 void yield(void);
 
 typedef enum {
