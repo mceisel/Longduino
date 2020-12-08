@@ -53,6 +53,9 @@
 #define SD_CS_GPIO_PORT                   GPIOB
 #define SD_CS_GPIO_CLK                    RCU_GPIOB
 
+/* SPI0 8MB Flash chip select */
+#define FLASH_SS_PIN PC0
+
 #ifdef __cplusplus
 extern "C" {
 #endif
