@@ -3,6 +3,8 @@
 
 #include "stdint.h"
 
+#define SPI_HAS_TRANSACTION 1
+
 #define SPI_LSBFIRST 0
 #define SPI_MSBFIRST 1
 
