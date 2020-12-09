@@ -211,6 +211,32 @@ uint8_t SPIClass::transfer(uint8_t data)
     return ret;
 }
 
+uint16_t SPIClass::transfer16(uint16_t data)
+{
+    uint16_t ret;
+    uint8_t *txdata = (uint8_t *)&data;
+    uint8_t *rxdata = (uint8_t *)&ret;
+
+    if (_ssel_hard == 0 && _ssel_bank != 0) {
+        gpio_bit_reset(_ssel_bank, _ssel_bit);
+    }
+
+    for (size_t i = 0; i < 2; i++) {
+        while (!spi_i2s_flag_get(_dev, SPI_FLAG_TBE));
+        spi_i2s_data_transmit(_dev, *txdata);
+        txdata++;
+        while (!spi_i2s_flag_get(_dev, SPI_FLAG_RBNE));
+        *rxdata = spi_i2s_data_receive(_dev);
+        rxdata++;
+    }
+
+    if (_ssel_hard == 0 && _ssel_bank != 0) {
+        gpio_bit_set(_ssel_bank, _ssel_bit);
+    }
+
+    return ret;
+}
+
 void SPIClass::setBitOrder(uint8_t bitOrder) {
     _bitOrder = bitOrder;
     beginTransaction();

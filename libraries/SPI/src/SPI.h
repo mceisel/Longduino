@@ -65,6 +65,7 @@ public:
     void transfer(
         uint8_t* txdata, uint8_t* rxdata, uint32_t size, uint32_t timeout = 1);
     uint8_t transfer(uint8_t data);
+    uint16_t transfer16(uint16_t data);
 
     void setBitOrder(uint8_t bitOrder);
     void setDataMode(uint8_t dataMode);
