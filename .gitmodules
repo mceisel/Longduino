@@ -7,3 +7,6 @@
 [submodule "libraries/Seeed_Arduino_LCD"]
 	path = libraries/Seeed_Arduino_LCD
 	url = https://github.com/scpcom/Seeed_Arduino_LCD
+[submodule "libraries/SPIMemory"]
+	path = libraries/SPIMemory
+	url = https://github.com/scpcom/SPIMemory
