@@ -4,3 +4,6 @@
 [submodule "libraries/WiFiEsp"]
 	path = libraries/WiFiEsp
 	url = https://github.com/scpcom/WiFiEsp
+[submodule "libraries/Seeed_Arduino_LCD"]
+	path = libraries/Seeed_Arduino_LCD
+	url = https://github.com/scpcom/Seeed_Arduino_LCD
