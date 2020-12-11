@@ -107,11 +107,6 @@ private:
 
     uint16_t _timeOutMillis;
 
-    bool slave_irq_event_start = false;
-
-    void (*slave_recv_handler)(int) ;
-    void (*slave_send_handler)(void) ;
-
 };
 
 
