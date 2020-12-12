@@ -11,7 +11,6 @@ const i2c_dev_t I2C_MAP[VARIANT_I2C_NUM] {
 
 #define I2C0_SPEED              100000
 #define I2C0_SLAVE_ADDRESS7     0xA0
-#define I2C_PAGE_SIZE           8
 
 typedef enum
 {
@@ -294,55 +293,8 @@ uint8_t i2c_page_write_timeout(const i2c_dev_t *_dev, uint16_t device_address, u
 */
 void i2c_buffer_write_timeout(const i2c_dev_t *_dev, uint16_t device_address, uint8_t* p_buffer, uint16_t number_of_byte)
 {
-    uint8_t number_of_page = 0, number_of_single = 0, address = 0, count = 0;
-
-    //address = write_address % I2C_PAGE_SIZE;
-    count = I2C_PAGE_SIZE - address;
-    number_of_page = number_of_byte / I2C_PAGE_SIZE;
-    number_of_single = number_of_byte % I2C_PAGE_SIZE;
-
-    /* if write_address is I2C_PAGE_SIZE aligned  */
-    if(0 == address){
-        while(number_of_page--){
-            i2c_page_write_timeout(_dev, device_address, p_buffer, I2C_PAGE_SIZE);
-            i2c_wait_standby_state_timeout(_dev, device_address);
-            //write_address += I2C_PAGE_SIZE;
-            p_buffer += I2C_PAGE_SIZE;
-        }
-        if(0 != number_of_single){
-            i2c_page_write_timeout(_dev, device_address, p_buffer, number_of_single);
-            i2c_wait_standby_state_timeout(_dev, device_address);
-        }
-    }else{
-        /* if write_address is not I2C_PAGE_SIZE aligned */
-        if(number_of_byte < count){
-            i2c_page_write_timeout(_dev, device_address, p_buffer, number_of_byte);
-            i2c_wait_standby_state_timeout(_dev, device_address);
-        }else{
-            number_of_byte -= count;
-            number_of_page = number_of_byte / I2C_PAGE_SIZE;
-            number_of_single = number_of_byte % I2C_PAGE_SIZE;
-
-            if(0 != count){
-                i2c_page_write_timeout(_dev, device_address, p_buffer, count);
-                i2c_wait_standby_state_timeout(_dev, device_address);
-                //write_address += count;
-                p_buffer += count;
-            }
-            /* write page */
-            while(number_of_page--){
-                i2c_page_write_timeout(_dev, device_address, p_buffer, I2C_PAGE_SIZE);
-                i2c_wait_standby_state_timeout(_dev, device_address);
-                //write_address += I2C_PAGE_SIZE;
-                p_buffer += I2C_PAGE_SIZE;
-            }
-            /* write single */
-            if(0 != number_of_single){
-                i2c_page_write_timeout(_dev, device_address, p_buffer, number_of_single);
-                i2c_wait_standby_state_timeout(_dev, device_address);
-            }
-        }
-    }
+    i2c_page_write_timeout(_dev, device_address, p_buffer, number_of_byte);
+    i2c_wait_standby_state_timeout(_dev, device_address);
 }
 
 /*!
@@ -618,7 +570,6 @@ TwoWire::readTransmission(uint16_t address, uint8_t* receive_buf, size_t receive
 void 
 TwoWire::beginTransmission(uint16_t address)
 {
-    i2c_bus_reset(_dev);
     /* enable acknowledge */
     i2c_ack_config(_dev->i2c_dev,I2C_ACK_ENABLE);
     // Clear buffers when new transation/packet starts
