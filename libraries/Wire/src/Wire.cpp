@@ -775,5 +775,4 @@ TwoWire::scan(){
 }
 
 TwoWire Wire = TwoWire(I2C_DEVICE_0);
-//TwoWire Wire1 = TwoWire(I2C_DEVICE_1);
-//TwoWire Wire2 = TwoWire(I2C_DEVICE_2);
+TwoWire Wire1 = TwoWire(I2C_DEVICE_1);
