@@ -307,13 +307,11 @@ void i2c_buffer_write_timeout(const i2c_dev_t *_dev, uint16_t device_address, ui
 uint8_t i2c_buffer_read_timeout(const i2c_dev_t *_dev, uint16_t device_address, uint8_t* p_buffer, uint16_t number_of_byte)
 {
     uint8_t   state = I2C_START;
-    uint8_t   read_cycle = 0;
     uint16_t  timeout = 0;
     uint8_t   i2c_timeout_flag = 0;
     while(!(i2c_timeout_flag)){
         switch(state){
         case I2C_START:
-            if(RESET == read_cycle){
                 /* i2c master sends start signal only when the bus is idle */
                 while(i2c_flag_get(_dev->i2c_dev, I2C_FLAG_I2CBSY)&&(timeout < I2C_TIME_OUT)){
                     timeout++;
@@ -329,7 +327,6 @@ uint8_t i2c_buffer_read_timeout(const i2c_dev_t *_dev, uint16_t device_address, 
                     state = I2C_START;
                     printf("i2c bus is busy in READ!\n");
                 }
-            }
             /* send the start signal */
             i2c_start_on_bus(_dev->i2c_dev);
             timeout = 0;
@@ -341,22 +338,16 @@ uint8_t i2c_buffer_read_timeout(const i2c_dev_t *_dev, uint16_t device_address, 
                 timeout++;
             }
             if(timeout < I2C_TIME_OUT){
-                if(RESET == read_cycle){
-                    i2c_master_addressing(_dev->i2c_dev, device_address, I2C_TRANSMITTER);
-                    state = I2C_CLEAR_ADDRESS_FLAG;
-                }else{
                     i2c_master_addressing(_dev->i2c_dev, device_address, I2C_RECEIVER);
                     if(number_of_byte < 3){
                         /* disable acknowledge */
                         i2c_ack_config(_dev->i2c_dev,I2C_ACK_DISABLE);
                     }
                     state = I2C_CLEAR_ADDRESS_FLAG;
-                }
                 timeout = 0;
             }else{
                 timeout = 0;
                 state = I2C_START;
-                read_cycle = 0;
                 printf("i2c master sends start signal timeout in READ!\n");
             }
             break;
@@ -367,7 +358,7 @@ uint8_t i2c_buffer_read_timeout(const i2c_dev_t *_dev, uint16_t device_address, 
             }
             if(timeout < I2C_TIME_OUT){
                 i2c_flag_clear(_dev->i2c_dev, I2C_FLAG_ADDSEND);
-                if((SET == read_cycle)&&(1 == number_of_byte)){
+                if(1 == number_of_byte){
                     /* send a stop condition to I2C bus */
                     i2c_stop_on_bus(_dev->i2c_dev);
                 }
@@ -376,23 +367,10 @@ uint8_t i2c_buffer_read_timeout(const i2c_dev_t *_dev, uint16_t device_address, 
             }else{
                 timeout = 0;
                 state   = I2C_START;
-                read_cycle = 0;
                 printf("i2c master clears address flag timeout in READ!\n");
             }
             break;
         case I2C_TRANSMIT_DATA:
-            if(RESET == read_cycle){
-                if(timeout < I2C_TIME_OUT){
-                    timeout = 0;
-                    state = I2C_START;
-                    read_cycle++;
-                }else{
-                    timeout = 0;
-                    state = I2C_START;
-                    read_cycle = 0;
-                    printf("i2c master sends EEPROM's internal address timeout in READ!\n");
-                }
-            }else{
                 while(number_of_byte){
                     timeout++;
                     if(3 == number_of_byte){
@@ -422,13 +400,11 @@ uint8_t i2c_buffer_read_timeout(const i2c_dev_t *_dev, uint16_t device_address, 
                     if(timeout > I2C_TIME_OUT){
                         timeout = 0;
                         state = I2C_START;
-                        read_cycle = 0;
                         printf("i2c master sends data timeout in READ!\n");
                     }
                 }
             timeout = 0;
             state = I2C_STOP;
-        }
             break;
         case I2C_STOP:
             /* i2c master sends STOP signal successfully */
@@ -442,13 +418,11 @@ uint8_t i2c_buffer_read_timeout(const i2c_dev_t *_dev, uint16_t device_address, 
             }else{
                 timeout = 0;
                 state = I2C_START;
-                read_cycle = 0;
                 printf("i2c master sends stop signal timeout in READ!\n");
             }
             break;
         default:
             state = I2C_START;
-            read_cycle = 0;
             i2c_timeout_flag = I2C_OK;
             timeout = 0;
             printf("i2c master sends start signal in READ.\n");
