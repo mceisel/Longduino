@@ -159,14 +159,38 @@ uint8_t i2c_wait_standby_state_timeout(const i2c_dev_t *_dev, uint16_t device_ad
 
 }
 
+uint8_t i2c_stop_write(const i2c_dev_t *_dev)
+{
+    uint8_t   state = I2C_START;
+    uint16_t  timeout = 0;
+
+    /* send a stop condition to I2C bus */
+    i2c_stop_on_bus(_dev->i2c_dev);
+    /* i2c master sends STOP signal successfully */
+    while((I2C_CTL0(_dev->i2c_dev)&0x0200)&&(timeout < I2C_TIME_OUT)){
+        timeout++;
+    }
+    if(timeout < I2C_TIME_OUT){
+        timeout = 0;
+        state = I2C_END;
+    }
+    else{
+        timeout = 0;
+        state = I2C_START;
+        //printf("i2c master sends stop signal timeout in WRITE!\n");
+    }
+
+    return state;
+}
+
 /*!
-    \brief      write more than one byte with a single write cycle
+    \brief      write buffer of data use timeout function
     \param[in]  p_buffer: pointer to the buffer containing the data to be written
     \param[in]  number_of_byte: number of bytes to write
     \param[out] none
     \retval     none
 */
-uint8_t i2c_page_write_timeout(const i2c_dev_t *_dev, uint16_t device_address, uint8_t* p_buffer, uint8_t number_of_byte)
+uint8_t i2c_buffer_write_timeout(const i2c_dev_t *_dev, uint16_t device_address, uint8_t* p_buffer, uint16_t number_of_byte)
 {
     uint8_t   state = I2C_START;
     uint16_t  timeout = 0;
@@ -253,7 +277,8 @@ uint8_t i2c_page_write_timeout(const i2c_dev_t *_dev, uint16_t device_address, u
                 }
             }
             timeout = 0;
-            state = I2C_STOP;
+            state = I2C_END;
+            i2c_timeout_flag = I2C_OK;
             break;
         case I2C_STOP:
             /* send a stop condition to I2C bus */
@@ -285,19 +310,6 @@ uint8_t i2c_page_write_timeout(const i2c_dev_t *_dev, uint16_t device_address, u
 }
 
 /*!
-    \brief      write buffer of data use timeout function
-    \param[in]  p_buffer: pointer to the buffer  containing the data to be written
-    \param[in]  number_of_byte: number of bytes to write
-    \param[out] none
-    \retval     none
-*/
-void i2c_buffer_write_timeout(const i2c_dev_t *_dev, uint16_t device_address, uint8_t* p_buffer, uint16_t number_of_byte)
-{
-    i2c_page_write_timeout(_dev, device_address, p_buffer, number_of_byte);
-    i2c_wait_standby_state_timeout(_dev, device_address);
-}
-
-/*!
     \brief      read data
     \param[in]  p_buffer: pointer to the buffer that receives the data read
     \param[in]  number_of_byte: number of bytes to reads
@@ -325,7 +337,7 @@ uint8_t i2c_buffer_read_timeout(const i2c_dev_t *_dev, uint16_t device_address, 
                     i2c_bus_reset(_dev);
                     timeout = 0;
                     state = I2C_START;
-                    printf("i2c bus is busy in READ!\n");
+                    //printf("i2c bus is busy in READ!\n");
                 }
             /* send the start signal */
             i2c_start_on_bus(_dev->i2c_dev);
@@ -437,6 +449,7 @@ TwoWire::TwoWire(i2c_device_number_t i2c_device)
     i2c_tx_buff = 0;
     i2c_rx_buff = 0;
     _dev = NULL;
+    _need_stop = false;
 
     if (i2c_device >= VARIANT_I2C_NUM)
       return;
@@ -544,6 +557,12 @@ TwoWire::readTransmission(uint16_t address, uint8_t* receive_buf, size_t receive
 void 
 TwoWire::beginTransmission(uint16_t address)
 {
+    if (_need_stop) {
+        i2c_stop_write(_dev);
+        i2c_wait_standby_state_timeout(_dev,txAddress<<1);
+        _need_stop = false;
+    }
+
     /* enable acknowledge */
     i2c_ack_config(_dev->i2c_dev,I2C_ACK_ENABLE);
     // Clear buffers when new transation/packet starts
@@ -569,6 +588,7 @@ TwoWire::endTransmission(bool sendStop)  //结束时从rxbuff发送数据？
     {
         tx_data[index++] = i2c_tx_buff->read_char();
     }
+    _need_stop = true;
     state = writeTransmission(txAddress, tx_data, tx_data_length,sendStop);
     return state;
 }

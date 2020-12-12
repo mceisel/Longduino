@@ -101,6 +101,7 @@ public:
 
 private:
     const i2c_dev_t *_dev;
+    bool _need_stop;
     uint16_t i2c_slave_address;
     bool is_master_mode = false;
     uint32_t address_width = 7;
