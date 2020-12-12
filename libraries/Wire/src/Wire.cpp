@@ -2,6 +2,13 @@
 #include "pins_arduino.h"
 #include "Wire.h"
 
+#define VARIANT_I2C_NUM 2
+
+const i2c_dev_t I2C_MAP[VARIANT_I2C_NUM] {
+    {I2C0, RCU_I2C0, PB7,  PB6,  PB5},
+    {I2C1, RCU_I2C1, PB11 ,PB10, PB12},
+};
+
 #define I2C0_SPEED              100000
 #define I2C0_SLAVE_ADDRESS7     0xA0
 #define I2C_PAGE_SIZE           8
@@ -27,26 +34,29 @@ typedef enum
     \param[out] none
     \retval     none
 */
-void i2c_bus_reset()
+void i2c_bus_reset(const i2c_dev_t *_dev)
 {
     /* configure SDA/SCL for GPIO */
-    GPIO_BC(GPIOB) |= GPIO_PIN_6|GPIO_PIN_7;
-    gpio_init(GPIOB,GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_6 | GPIO_PIN_7);
+    GPIO_BC(digitalPinToPort(_dev->scl)) |= digitalPinToBitMask(_dev->scl);
+    GPIO_BC(digitalPinToPort(_dev->sda)) |= digitalPinToBitMask(_dev->sda);
+    gpio_init(digitalPinToPort(_dev->scl), GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, digitalPinToBitMask(_dev->scl));
+    gpio_init(digitalPinToPort(_dev->sda), GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, digitalPinToBitMask(_dev->sda));
     asm ("nop");
     asm ("nop");
     asm ("nop");
     asm ("nop");
     asm ("nop");
-    GPIO_BOP(GPIOB) |= GPIO_PIN_6;
+    GPIO_BOP(digitalPinToPort(_dev->scl)) |= digitalPinToBitMask(_dev->scl);
     asm ("nop");
     asm ("nop");
     asm ("nop");
     asm ("nop");
     asm ("nop");
-    GPIO_BOP(GPIOB) |= GPIO_PIN_7;
-    /* connect PB6 to I2C0_SCL */
-    /* connect PB7 to I2C0_SDA */
-    gpio_init(GPIOB, GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, GPIO_PIN_6 | GPIO_PIN_7);
+    GPIO_BOP(digitalPinToPort(_dev->sda)) |= digitalPinToBitMask(_dev->sda);
+    /* connect pin to I2Cx_SCL */
+    gpio_init(digitalPinToPort(_dev->scl), GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, digitalPinToBitMask(_dev->scl));
+    /* connect pin to I2Cx_SDA */
+    gpio_init(digitalPinToPort(_dev->sda), GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, digitalPinToBitMask(_dev->sda));
 }
 
 /*!
@@ -55,7 +65,7 @@ void i2c_bus_reset()
     \param[out] none
     \retval     none
 */
-uint8_t i2c_wait_standby_state_timeout(uint16_t device_address)
+uint8_t i2c_wait_standby_state_timeout(const i2c_dev_t *_dev, uint16_t device_address)
 {
     uint8_t   state = I2C_START;
     uint16_t  timeout = 0;
@@ -65,16 +75,16 @@ uint8_t i2c_wait_standby_state_timeout(uint16_t device_address)
     switch(state){
         case I2C_START:
             /* i2c master sends start signal only when the bus is idle */
-            while(i2c_flag_get(I2C0, I2C_FLAG_I2CBSY)&&(timeout < I2C_TIME_OUT)){
+            while(i2c_flag_get(_dev->i2c_dev, I2C_FLAG_I2CBSY)&&(timeout < I2C_TIME_OUT)){
                 timeout++;
             }
             if(timeout < I2C_TIME_OUT){
-                i2c_start_on_bus(I2C0);
+                i2c_start_on_bus(_dev->i2c_dev);
                 timeout = 0;
                 state = I2C_SEND_ADDRESS;
             }
             else{
-                i2c_bus_reset();
+                i2c_bus_reset(_dev);
                 timeout = 0;
                 state = I2C_START;
                 printf("i2c bus is busy!\n");
@@ -82,11 +92,11 @@ uint8_t i2c_wait_standby_state_timeout(uint16_t device_address)
             break;
         case I2C_SEND_ADDRESS:
             /* i2c master sends START signal successfully */
-            while((! i2c_flag_get(I2C0, I2C_FLAG_SBSEND))&&(timeout < I2C_TIME_OUT)){
+            while((! i2c_flag_get(_dev->i2c_dev, I2C_FLAG_SBSEND))&&(timeout < I2C_TIME_OUT)){
                 timeout++;
             }
             if(timeout < I2C_TIME_OUT){
-                i2c_master_addressing(I2C0, device_address, I2C_TRANSMITTER);
+                i2c_master_addressing(_dev->i2c_dev, device_address, I2C_TRANSMITTER);
                 timeout = 0;
                 state = I2C_CLEAR_ADDRESS_FLAG;
             }
@@ -97,22 +107,22 @@ uint8_t i2c_wait_standby_state_timeout(uint16_t device_address)
             }
             break;
         case I2C_CLEAR_ADDRESS_FLAG:
-            while((!((i2c_flag_get(I2C0, I2C_FLAG_ADDSEND))||( i2c_flag_get(I2C0, I2C_FLAG_AERR))))&&(timeout < I2C_TIME_OUT)){
+            while((!((i2c_flag_get(_dev->i2c_dev, I2C_FLAG_ADDSEND))||( i2c_flag_get(_dev->i2c_dev, I2C_FLAG_AERR))))&&(timeout < I2C_TIME_OUT)){
                 timeout++;
             }
             if(timeout < I2C_TIME_OUT){
-                if(i2c_flag_get(I2C0, I2C_FLAG_ADDSEND)){
-                    i2c_flag_clear(I2C0, I2C_FLAG_ADDSEND);
+                if(i2c_flag_get(_dev->i2c_dev, I2C_FLAG_ADDSEND)){
+                    i2c_flag_clear(_dev->i2c_dev, I2C_FLAG_ADDSEND);
                     timeout = 0;
                     /* send a stop condition to I2C bus */
-                    i2c_stop_on_bus(I2C0);
+                    i2c_stop_on_bus(_dev->i2c_dev);
                     i2c_timeout_flag = I2C_OK;
                     /* exit the function */
                     return I2C_END;
 
                 }else{
                     /* clear the bit of AE */
-                    i2c_flag_clear(I2C0,I2C_FLAG_AERR);
+                    i2c_flag_clear(_dev->i2c_dev,I2C_FLAG_AERR);
                     timeout = 0;
                     state = I2C_STOP;
                 }
@@ -125,9 +135,9 @@ uint8_t i2c_wait_standby_state_timeout(uint16_t device_address)
             break;
         case I2C_STOP:
             /* send a stop condition to I2C bus */
-            i2c_stop_on_bus(I2C0);
+            i2c_stop_on_bus(_dev->i2c_dev);
             /* i2c master sends STOP signal successfully */
-            while((I2C_CTL0(I2C0)&0x0200)&&(timeout < I2C_TIME_OUT)){
+            while((I2C_CTL0(_dev->i2c_dev)&0x0200)&&(timeout < I2C_TIME_OUT)){
                 timeout++;
             }
             if(timeout < I2C_TIME_OUT){
@@ -157,7 +167,7 @@ uint8_t i2c_wait_standby_state_timeout(uint16_t device_address)
     \param[out] none
     \retval     none
 */
-uint8_t i2c_page_write_timeout(uint16_t device_address, uint8_t* p_buffer, uint8_t number_of_byte)
+uint8_t i2c_page_write_timeout(const i2c_dev_t *_dev, uint16_t device_address, uint8_t* p_buffer, uint8_t number_of_byte)
 {
     uint8_t   state = I2C_START;
     uint16_t  timeout = 0;
@@ -166,16 +176,16 @@ uint8_t i2c_page_write_timeout(uint16_t device_address, uint8_t* p_buffer, uint8
         switch(state){
         case I2C_START:
             /* i2c master sends start signal only when the bus is idle */
-            while(i2c_flag_get(I2C0, I2C_FLAG_I2CBSY)&&(timeout < I2C_TIME_OUT)){
+            while(i2c_flag_get(_dev->i2c_dev, I2C_FLAG_I2CBSY)&&(timeout < I2C_TIME_OUT)){
                 timeout++;
             }
             if(timeout < I2C_TIME_OUT){
-                i2c_start_on_bus(I2C0);
+                i2c_start_on_bus(_dev->i2c_dev);
                 timeout = 0;
                 state = I2C_SEND_ADDRESS;
             }
             else{
-                i2c_bus_reset();
+                i2c_bus_reset(_dev);
                 timeout = 0;
                 state = I2C_START;
                 printf("i2c bus is busy in WRITE!\n");
@@ -183,11 +193,11 @@ uint8_t i2c_page_write_timeout(uint16_t device_address, uint8_t* p_buffer, uint8
             break;
         case I2C_SEND_ADDRESS:
             /* i2c master sends START signal successfully */
-            while((! i2c_flag_get(I2C0, I2C_FLAG_SBSEND))&&(timeout < I2C_TIME_OUT)){
+            while((! i2c_flag_get(_dev->i2c_dev, I2C_FLAG_SBSEND))&&(timeout < I2C_TIME_OUT)){
                 timeout++;
             }
             if(timeout < I2C_TIME_OUT){
-                i2c_master_addressing(I2C0, device_address, I2C_TRANSMITTER);
+                i2c_master_addressing(_dev->i2c_dev, device_address, I2C_TRANSMITTER);
                 timeout = 0;
                 state = I2C_CLEAR_ADDRESS_FLAG;
             }
@@ -199,11 +209,11 @@ uint8_t i2c_page_write_timeout(uint16_t device_address, uint8_t* p_buffer, uint8
             break;
         case I2C_CLEAR_ADDRESS_FLAG:
             /* address flag set means i2c slave sends ACK */
-            while((! i2c_flag_get(I2C0, I2C_FLAG_ADDSEND))&&(timeout < I2C_TIME_OUT)){
+            while((! i2c_flag_get(_dev->i2c_dev, I2C_FLAG_ADDSEND))&&(timeout < I2C_TIME_OUT)){
                 timeout++;
             }
             if(timeout < I2C_TIME_OUT){
-                i2c_flag_clear(I2C0, I2C_FLAG_ADDSEND);
+                i2c_flag_clear(_dev->i2c_dev, I2C_FLAG_ADDSEND);
                 timeout = 0;
                 state = I2C_TRANSMIT_DATA;
             }
@@ -215,7 +225,7 @@ uint8_t i2c_page_write_timeout(uint16_t device_address, uint8_t* p_buffer, uint8
             break;
         case I2C_TRANSMIT_DATA:
             /* wait until the transmit data buffer is empty */
-            while((! i2c_flag_get(I2C0, I2C_FLAG_TBE))&&(timeout < I2C_TIME_OUT)){
+            while((! i2c_flag_get(_dev->i2c_dev, I2C_FLAG_TBE))&&(timeout < I2C_TIME_OUT)){
                 timeout++;
             }
             if(timeout < I2C_TIME_OUT){
@@ -227,11 +237,11 @@ uint8_t i2c_page_write_timeout(uint16_t device_address, uint8_t* p_buffer, uint8
                 printf("i2c master sends data timeout in WRITE!\n");
             }
             while(number_of_byte--){
-                i2c_data_transmit(I2C0, *p_buffer);
+                i2c_data_transmit(_dev->i2c_dev, *p_buffer);
                 /* point to the next byte to be written */
                 p_buffer++;
                 /* wait until BTC bit is set */
-                while((!i2c_flag_get(I2C0, I2C_FLAG_BTC))&&(timeout < I2C_TIME_OUT)){
+                while((!i2c_flag_get(_dev->i2c_dev, I2C_FLAG_BTC))&&(timeout < I2C_TIME_OUT)){
                     timeout++;
                 }
                 if(timeout < I2C_TIME_OUT){
@@ -248,9 +258,9 @@ uint8_t i2c_page_write_timeout(uint16_t device_address, uint8_t* p_buffer, uint8
             break;
         case I2C_STOP:
             /* send a stop condition to I2C bus */
-            i2c_stop_on_bus(I2C0);
+            i2c_stop_on_bus(_dev->i2c_dev);
             /* i2c master sends STOP signal successfully */
-            while((I2C_CTL0(I2C0)&0x0200)&&(timeout < I2C_TIME_OUT)){
+            while((I2C_CTL0(_dev->i2c_dev)&0x0200)&&(timeout < I2C_TIME_OUT)){
                 timeout++;
             }
             if(timeout < I2C_TIME_OUT){
@@ -282,7 +292,7 @@ uint8_t i2c_page_write_timeout(uint16_t device_address, uint8_t* p_buffer, uint8
     \param[out] none
     \retval     none
 */
-void i2c_buffer_write_timeout(uint16_t device_address, uint8_t* p_buffer, uint16_t number_of_byte)
+void i2c_buffer_write_timeout(const i2c_dev_t *_dev, uint16_t device_address, uint8_t* p_buffer, uint16_t number_of_byte)
 {
     uint8_t number_of_page = 0, number_of_single = 0, address = 0, count = 0;
 
@@ -294,42 +304,42 @@ void i2c_buffer_write_timeout(uint16_t device_address, uint8_t* p_buffer, uint16
     /* if write_address is I2C_PAGE_SIZE aligned  */
     if(0 == address){
         while(number_of_page--){
-            i2c_page_write_timeout(device_address, p_buffer, I2C_PAGE_SIZE);
-            i2c_wait_standby_state_timeout(device_address);
+            i2c_page_write_timeout(_dev, device_address, p_buffer, I2C_PAGE_SIZE);
+            i2c_wait_standby_state_timeout(_dev, device_address);
             //write_address += I2C_PAGE_SIZE;
             p_buffer += I2C_PAGE_SIZE;
         }
         if(0 != number_of_single){
-            i2c_page_write_timeout(device_address, p_buffer, number_of_single);
-            i2c_wait_standby_state_timeout(device_address);
+            i2c_page_write_timeout(_dev, device_address, p_buffer, number_of_single);
+            i2c_wait_standby_state_timeout(_dev, device_address);
         }
     }else{
         /* if write_address is not I2C_PAGE_SIZE aligned */
         if(number_of_byte < count){
-            i2c_page_write_timeout(device_address, p_buffer, number_of_byte);
-            i2c_wait_standby_state_timeout(device_address);
+            i2c_page_write_timeout(_dev, device_address, p_buffer, number_of_byte);
+            i2c_wait_standby_state_timeout(_dev, device_address);
         }else{
             number_of_byte -= count;
             number_of_page = number_of_byte / I2C_PAGE_SIZE;
             number_of_single = number_of_byte % I2C_PAGE_SIZE;
 
             if(0 != count){
-                i2c_page_write_timeout(device_address, p_buffer, count);
-                i2c_wait_standby_state_timeout(device_address);
+                i2c_page_write_timeout(_dev, device_address, p_buffer, count);
+                i2c_wait_standby_state_timeout(_dev, device_address);
                 //write_address += count;
                 p_buffer += count;
             }
             /* write page */
             while(number_of_page--){
-                i2c_page_write_timeout(device_address, p_buffer, I2C_PAGE_SIZE);
-                i2c_wait_standby_state_timeout(device_address);
+                i2c_page_write_timeout(_dev, device_address, p_buffer, I2C_PAGE_SIZE);
+                i2c_wait_standby_state_timeout(_dev, device_address);
                 //write_address += I2C_PAGE_SIZE;
                 p_buffer += I2C_PAGE_SIZE;
             }
             /* write single */
             if(0 != number_of_single){
-                i2c_page_write_timeout(device_address, p_buffer, number_of_single);
-                i2c_wait_standby_state_timeout(device_address);
+                i2c_page_write_timeout(_dev, device_address, p_buffer, number_of_single);
+                i2c_wait_standby_state_timeout(_dev, device_address);
             }
         }
     }
@@ -342,7 +352,7 @@ void i2c_buffer_write_timeout(uint16_t device_address, uint8_t* p_buffer, uint16
     \param[out] none
     \retval     none
 */
-uint8_t i2c_buffer_read_timeout(uint16_t device_address, uint8_t* p_buffer, uint16_t number_of_byte)
+uint8_t i2c_buffer_read_timeout(const i2c_dev_t *_dev, uint16_t device_address, uint8_t* p_buffer, uint16_t number_of_byte)
 {
     uint8_t   state = I2C_START;
     uint8_t   read_cycle = 0;
@@ -353,40 +363,40 @@ uint8_t i2c_buffer_read_timeout(uint16_t device_address, uint8_t* p_buffer, uint
         case I2C_START:
             if(RESET == read_cycle){
                 /* i2c master sends start signal only when the bus is idle */
-                while(i2c_flag_get(I2C0, I2C_FLAG_I2CBSY)&&(timeout < I2C_TIME_OUT)){
+                while(i2c_flag_get(_dev->i2c_dev, I2C_FLAG_I2CBSY)&&(timeout < I2C_TIME_OUT)){
                     timeout++;
                 }
                 if(timeout < I2C_TIME_OUT){
                     /* whether to send ACK or not for the next byte */
                     if(2 == number_of_byte){
-                        i2c_ackpos_config(I2C0,I2C_ACKPOS_NEXT);
+                        i2c_ackpos_config(_dev->i2c_dev,I2C_ACKPOS_NEXT);
                     }
                 }else{
-                    i2c_bus_reset();
+                    i2c_bus_reset(_dev);
                     timeout = 0;
                     state = I2C_START;
                     printf("i2c bus is busy in READ!\n");
                 }
             }
             /* send the start signal */
-            i2c_start_on_bus(I2C0);
+            i2c_start_on_bus(_dev->i2c_dev);
             timeout = 0;
             state = I2C_SEND_ADDRESS;
             break;
         case I2C_SEND_ADDRESS:
             /* i2c master sends START signal successfully */
-            while((! i2c_flag_get(I2C0, I2C_FLAG_SBSEND))&&(timeout < I2C_TIME_OUT)){
+            while((! i2c_flag_get(_dev->i2c_dev, I2C_FLAG_SBSEND))&&(timeout < I2C_TIME_OUT)){
                 timeout++;
             }
             if(timeout < I2C_TIME_OUT){
                 if(RESET == read_cycle){
-                    i2c_master_addressing(I2C0, device_address, I2C_TRANSMITTER);
+                    i2c_master_addressing(_dev->i2c_dev, device_address, I2C_TRANSMITTER);
                     state = I2C_CLEAR_ADDRESS_FLAG;
                 }else{
-                    i2c_master_addressing(I2C0, device_address, I2C_RECEIVER);
+                    i2c_master_addressing(_dev->i2c_dev, device_address, I2C_RECEIVER);
                     if(number_of_byte < 3){
                         /* disable acknowledge */
-                        i2c_ack_config(I2C0,I2C_ACK_DISABLE);
+                        i2c_ack_config(_dev->i2c_dev,I2C_ACK_DISABLE);
                     }
                     state = I2C_CLEAR_ADDRESS_FLAG;
                 }
@@ -400,14 +410,14 @@ uint8_t i2c_buffer_read_timeout(uint16_t device_address, uint8_t* p_buffer, uint
             break;
         case I2C_CLEAR_ADDRESS_FLAG:
             /* address flag set means i2c slave sends ACK */
-            while((!i2c_flag_get(I2C0, I2C_FLAG_ADDSEND))&&(timeout < I2C_TIME_OUT)){
+            while((!i2c_flag_get(_dev->i2c_dev, I2C_FLAG_ADDSEND))&&(timeout < I2C_TIME_OUT)){
                 timeout++;
             }
             if(timeout < I2C_TIME_OUT){
-                i2c_flag_clear(I2C0, I2C_FLAG_ADDSEND);
+                i2c_flag_clear(_dev->i2c_dev, I2C_FLAG_ADDSEND);
                 if((SET == read_cycle)&&(1 == number_of_byte)){
                     /* send a stop condition to I2C bus */
-                    i2c_stop_on_bus(I2C0);
+                    i2c_stop_on_bus(_dev->i2c_dev);
                 }
                 timeout = 0;
                 state   = I2C_TRANSMIT_DATA;
@@ -435,20 +445,20 @@ uint8_t i2c_buffer_read_timeout(uint16_t device_address, uint8_t* p_buffer, uint
                     timeout++;
                     if(3 == number_of_byte){
                         /* wait until BTC bit is set */
-                        while(!i2c_flag_get(I2C0, I2C_FLAG_BTC));
+                        while(!i2c_flag_get(_dev->i2c_dev, I2C_FLAG_BTC));
                         /* disable acknowledge */
-                        i2c_ack_config(I2C0,I2C_ACK_DISABLE);
+                        i2c_ack_config(_dev->i2c_dev,I2C_ACK_DISABLE);
                     }
                     if(2 == number_of_byte){
                         /* wait until BTC bit is set */
-                        while(!i2c_flag_get(I2C0, I2C_FLAG_BTC));
+                        while(!i2c_flag_get(_dev->i2c_dev, I2C_FLAG_BTC));
                         /* send a stop condition to I2C bus */
-                        i2c_stop_on_bus(I2C0);
+                        i2c_stop_on_bus(_dev->i2c_dev);
                     }
                     /* wait until RBNE bit is set */
-                    if(i2c_flag_get(I2C0, I2C_FLAG_RBNE)){
+                    if(i2c_flag_get(_dev->i2c_dev, I2C_FLAG_RBNE)){
                         /* read a byte */
-                        *p_buffer = i2c_data_receive(I2C0);
+                        *p_buffer = i2c_data_receive(_dev->i2c_dev);
 
                         /* point to the next location where the byte read will be saved */
                         p_buffer++;
@@ -470,7 +480,7 @@ uint8_t i2c_buffer_read_timeout(uint16_t device_address, uint8_t* p_buffer, uint
             break;
         case I2C_STOP:
             /* i2c master sends STOP signal successfully */
-            while((I2C_CTL0(I2C0)&0x0200)&&(timeout < I2C_TIME_OUT)){
+            while((I2C_CTL0(_dev->i2c_dev)&0x0200)&&(timeout < I2C_TIME_OUT)){
                 timeout++;
             }
             if(timeout < I2C_TIME_OUT){
@@ -500,8 +510,13 @@ TwoWire::TwoWire(i2c_device_number_t i2c_device)
 {
     i2c_tx_buff = 0;
     i2c_rx_buff = 0;
+    _dev = NULL;
+
+    if (i2c_device >= VARIANT_I2C_NUM)
+      return;
 
     _i2c_num = i2c_device;
+    _dev = &I2C_MAP[_i2c_num];
 }
 
 TwoWire::~TwoWire()
@@ -512,24 +527,28 @@ TwoWire::~TwoWire()
 void 
 TwoWire::begin(uint8_t sda, uint8_t scl, uint32_t frequency)
 {
-    /* enable GPIOB clock */
-    rcu_periph_clock_enable(RCU_GPIOB);
+    if (!_dev)
+        return;
+
+    /* enable GPIO clock(s) */
+    rcu_periph_clock_enable(digitalPinToClkid(_dev->scl));
+    rcu_periph_clock_enable(digitalPinToClkid(_dev->sda));
     
-    /* connect PB6 to I2C0_SCL */
-    /* connect PB7 to I2C0_SDA */
-    gpio_init(GPIOB, GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, GPIO_PIN_6);
-    gpio_init(GPIOB, GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, GPIO_PIN_7);
+    /* connect pin to I2Cx_SCL */
+    gpio_init(digitalPinToPort(_dev->scl), GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, digitalPinToBitMask(_dev->scl));
+    /* connect pin to I2Cx_SDA */
+    gpio_init(digitalPinToPort(_dev->sda), GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, digitalPinToBitMask(_dev->sda));
 
     /* enable I2C clock */
-    rcu_periph_clock_enable(RCU_I2C0);
+    rcu_periph_clock_enable(_dev->clk_id);
     /* configure I2C clock */
-    i2c_clock_config(I2C0,I2C0_SPEED,I2C_DTCY_2);
+    i2c_clock_config(_dev->i2c_dev,I2C0_SPEED,I2C_DTCY_2);
     /* configure I2C address */
-    i2c_mode_addr_config(I2C0,I2C_I2CMODE_ENABLE,I2C_ADDFORMAT_7BITS,I2C0_SLAVE_ADDRESS7);
+    i2c_mode_addr_config(_dev->i2c_dev,I2C_I2CMODE_ENABLE,I2C_ADDFORMAT_7BITS,I2C0_SLAVE_ADDRESS7);
     /* enable I2C0 */
-    i2c_enable(I2C0);
+    i2c_enable(_dev->i2c_dev);
     /* enable acknowledge */
-    i2c_ack_config(I2C0,I2C_ACK_ENABLE);
+    i2c_ack_config(_dev->i2c_dev,I2C_ACK_ENABLE);
 
     is_master_mode = true;
     
@@ -583,7 +602,7 @@ TwoWire::getClock()
 int
 TwoWire::writeTransmission(uint16_t address, uint8_t* send_buf, size_t send_buf_len, bool sendStop)
 {
-    i2c_buffer_write_timeout(address<<1, send_buf, send_buf_len);
+    i2c_buffer_write_timeout(_dev, address<<1, send_buf, send_buf_len);
 
     return 0;
 }
@@ -591,7 +610,7 @@ TwoWire::writeTransmission(uint16_t address, uint8_t* send_buf, size_t send_buf_
 int
 TwoWire::readTransmission(uint16_t address, uint8_t* receive_buf, size_t receive_buf_len, bool sendStop)
 { 
-    i2c_buffer_read_timeout(address<<1, receive_buf, receive_buf_len);
+    i2c_buffer_read_timeout(_dev, address<<1, receive_buf, receive_buf_len);
     
     return 0;
 }
@@ -599,9 +618,9 @@ TwoWire::readTransmission(uint16_t address, uint8_t* receive_buf, size_t receive
 void 
 TwoWire::beginTransmission(uint16_t address)
 {
-    i2c_bus_reset();
+    i2c_bus_reset(_dev);
     /* enable acknowledge */
-    i2c_ack_config(I2C0,I2C_ACK_ENABLE);
+    i2c_ack_config(_dev->i2c_dev,I2C_ACK_ENABLE);
     // Clear buffers when new transation/packet starts
     flush();
 

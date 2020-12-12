@@ -14,11 +14,19 @@
 #define I2C0_SDA PB7
 #define I2C0_SCL PB6
 
+typedef struct _i2c_dev_t
+{
+    uint32_t i2c_dev;
+    rcu_periph_enum clk_id;
+    uint8_t sda;
+    uint8_t scl;
+    uint8_t smba;
+} i2c_dev_t;
+
 typedef enum _i2c_device_number
 {
     I2C_DEVICE_0,
     I2C_DEVICE_1,
-    I2C_DEVICE_2,
     I2C_DEVICE_MAX,
 } i2c_device_number_t;
 
@@ -92,6 +100,7 @@ public:
     void scan();
 
 private:
+    const i2c_dev_t *_dev;
     uint16_t i2c_slave_address;
     bool is_master_mode = false;
     uint32_t address_width = 7;
