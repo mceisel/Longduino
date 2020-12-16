@@ -37,6 +37,7 @@ void CopyFileToFlash(uint32_t addr, const char* path)
 {
     uint32_t offset = 0;
     uint32_t dataSize = 0;
+    uint32_t aligned_len = 0;
     size_t chunksize = sizeof(lcdBuffer);
     size_t bottomsize;
     File dataFile;
@@ -68,9 +69,12 @@ void CopyFileToFlash(uint32_t addr, const char* path)
         if (flash.getCapacity() < dataSize)
             dataSize = flash.getCapacity();
 
-        lcd.printf("Erasing %lu bytes...\n", dataSize);
-        if (flash.eraseSection(addr, dataSize)) {
-          /* */
+        aligned_len = (dataSize + (0x10000-1)) & ~(0x10000-1);
+
+        lcd.printf("Erasing %lu bytes...\n", aligned_len);
+        while (offset < dataSize) {
+          flash.eraseBlock64K(addr+offset);
+          offset += 0x10000;
         }
 
         while (offset+chunksize < dataSize) {
