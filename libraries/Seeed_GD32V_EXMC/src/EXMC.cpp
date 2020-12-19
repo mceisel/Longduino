@@ -114,9 +114,13 @@ uint16_t EXMCClass::transfer16(uint16_t data)
 
 void EXMCClass::transfer(void *buf, uint32_t count)
 {
-  uint8_t *buffer = reinterpret_cast<uint8_t *>(buf);
-  for (uint32_t i=0; i<count; i++) {
-    *buffer = transfer(*buffer);
+  uint16_t *buffer = reinterpret_cast<uint16_t *>(buf);
+  while (count >= 2) {
+    *buffer = transfer16(*buffer);
     buffer++;
+    count -= 2;
+  }
+  if (count) {
+    *(uint8_t *)buffer = transfer(*(uint8_t *)buffer);
   }
 }
