@@ -1,5 +1,6 @@
 
 #include "Sipeed_GD32V_LCD.h"
+#include "ST7735_Commands.h"
 
 #define SPI_FREQUENCY SPI_PSC_8
 
@@ -55,26 +56,26 @@ boolean Sipeed_GD32V_LCD::begin( uint32_t freq, uint16_t color )
     digitalWrite(TFT_RST, HIGH);
     delay(20);
 
-    writecommand(0x11);    // turn off sleep mode
+    writecommand(ST7735_SLPOUT);    // turn off sleep mode
     delay(100);
 
-    writecommand(0x21);    // display inversion mode
+    writecommand(ST7735_INVON);    // display inversion mode
 
-    writecommand(0xB1);    // Set the frame frequency of the full colors normal mode
+    writecommand(ST7735_FRMCTR1);    // Set the frame frequency of the full colors normal mode
                         // Frame rate=fosc/((RTNA x 2 + 40) x (LINE + FPA + BPA +2))
                         // fosc = 850kHz
     writedata(0x05);    // RTNA
     writedata(0x3A);    // FPA
     writedata(0x3A);    // BPA
 
-    writecommand(0xB2);    // Set the frame frequency of the Idle mode
+    writecommand(ST7735_FRMCTR2);    // Set the frame frequency of the Idle mode
                         // Frame rate=fosc/((RTNB x 2 + 40) x (LINE + FPB + BPB +2))
                         // fosc = 850kHz
     writedata(0x05);    // RTNB
     writedata(0x3A);    // FPB
     writedata(0x3A);    // BPB
 
-    writecommand(0xB3);    // Set the frame frequency of the Partial mode/ full colors
+    writecommand(ST7735_FRMCTR3);    // Set the frame frequency of the Partial mode/ full colors
     writedata(0x05);
     writedata(0x3A);
     writedata(0x3A);
@@ -82,33 +83,33 @@ boolean Sipeed_GD32V_LCD::begin( uint32_t freq, uint16_t color )
     writedata(0x3A);
     writedata(0x3A);
 
-    writecommand(0xB4);
+    writecommand(ST7735_INVCTR);
     writedata(0x03);
 
-    writecommand(0xC0);
+    writecommand(ST7735_PWCTR1);
     writedata(0x62);
     writedata(0x02);
     writedata(0x04);
 
-    writecommand(0xC1);
+    writecommand(ST7735_PWCTR2);
     writedata(0xC0);
 
-    writecommand(0xC2);
+    writecommand(ST7735_PWCTR3);
     writedata(0x0D);
     writedata(0x00);
 
-    writecommand(0xC3);
+    writecommand(ST7735_PWCTR4);
     writedata(0x8D);
     writedata(0x6A);
 
-    writecommand(0xC4);
+    writecommand(ST7735_PWCTR5);
     writedata(0x8D);
     writedata(0xEE);
 
-    writecommand(0xC5);  /*VCOM*/
+    writecommand(ST7735_VMCTR1);  /*VCOM*/
     writedata(0x0E);
 
-    writecommand(0xE0);
+    writecommand(ST7735_GMCTRP1);
     writedata(0x10);
     writedata(0x0E);
     writedata(0x02);
@@ -126,7 +127,7 @@ boolean Sipeed_GD32V_LCD::begin( uint32_t freq, uint16_t color )
     writedata(0x0E);
     writedata(0x10);
 
-    writecommand(0xE1);
+    writecommand(ST7735_GMCTRN1);
     writedata(0x10);
     writedata(0x0E);
     writedata(0x03);
@@ -144,12 +145,12 @@ boolean Sipeed_GD32V_LCD::begin( uint32_t freq, uint16_t color )
     writedata(0x0E);
     writedata(0x10);
 
-    writecommand(0x3A);    // define the format of RGB picture data
+    writecommand(ST7735_COLMOD);    // define the format of RGB picture data
     writedata(0x05);    // 16-bit/pixel
 
     writeRotation();
 
-    writecommand(0x29);	// Display On
+    writecommand(ST7735_DISPON);	// Display On
 
     fillScreen(color);
 
@@ -238,49 +239,49 @@ void Sipeed_GD32V_LCD::setAddrWindow(uint16_t x1,uint16_t y1,uint16_t x2,uint16_
 {
     if(_screenDir==0)
     {
-        writecommand(0x2a);//Column address settings
+        writecommand(ST7735_CASET);//Column address settings
         writedata16(x1+26);
         writedata16(x2+26);
-        writecommand(0x2b);//Row address setting
+        writecommand(ST7735_RASET);//Row address setting
         writedata16(y1+1);
         writedata16(y2+1);
-        writecommand(0x2c);//Memory write
+        writecommand(ST7735_RAMWR);//Memory write
     }
     else if(_screenDir==1)
     {
-        writecommand(0x2a);//Column address settings
+        writecommand(ST7735_CASET);//Column address settings
         writedata16(x1+26);
         writedata16(x2+26);
-        writecommand(0x2b);//Row address setting
+        writecommand(ST7735_RASET);//Row address setting
         writedata16(y1+1);
         writedata16(y2+1);
-        writecommand(0x2c);//Memory write
+        writecommand(ST7735_RAMWR);//Memory write
     }
     else if(_screenDir==2)
     {
-        writecommand(0x2a);//Column address settings
+        writecommand(ST7735_CASET);//Column address settings
         writedata16(x1+1);
         writedata16(x2+1);
-        writecommand(0x2b);//Row address setting
+        writecommand(ST7735_RASET);//Row address setting
         writedata16(y1+26);
         writedata16(y2+26);
-        writecommand(0x2c);//Memory write
+        writecommand(ST7735_RAMWR);//Memory write
     }
     else
     {
-        writecommand(0x2a);//Column address settings
+        writecommand(ST7735_CASET);//Column address settings
         writedata16(x1+1);
         writedata16(x2+1);
-        writecommand(0x2b);//Row address setting
+        writecommand(ST7735_RASET);//Row address setting
         writedata16(y1+26);
         writedata16(y2+26);
-        writecommand(0x2c);//Memory write
+        writecommand(ST7735_RAMWR);//Memory write
     }
 }
 
 void Sipeed_GD32V_LCD::writeRotation(void)
 {
-    writecommand(0x36);
+    writecommand(ST7735_MADCTL);
 
     if(_screenDir==0)
         writedata(0x08);
