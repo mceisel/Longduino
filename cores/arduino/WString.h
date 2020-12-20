@@ -30,6 +30,7 @@
 #include "avr/pgmspace.h"
 #else
 #include "deprecated-avr-comp/avr/pgmspace.h"
+#include "deprecated-avr-comp/avr/dtostrf.h"
 #endif
 
 // When compiling programs with this class, the following gcc parameters
